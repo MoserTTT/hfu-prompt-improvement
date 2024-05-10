@@ -4,11 +4,6 @@ import re
 import os
 from datetime import datetime
 
-# validierungsshit
-# cleaner code
-# docs
-# max bescheid geben
-# email
 
 class chromaDB_connector:
     def __init__(self):
@@ -45,7 +40,9 @@ class chromaDB_connector:
         if len([key for key in metadata if key not in self.allowed_metadata_keys]) > 0:
             raise ValueError(f"You entered invalid keys in the metadata: {str([key for key in metadata if key not in self.allowed_metadata_keys])}!")
         
-        # name validation, name is the only required key
+        # name validation
+        if "name" not in metadata:
+            raise ValueError("Name has to be set in metadata!")
         if type(metadata["name"]) != str:
             raise ValueError("The name has to be of type str!")
         if len(metadata["name"]) < 2 or len(metadata["name"]) > 50:
@@ -80,8 +77,8 @@ class chromaDB_connector:
                     raise ValueError("The model elements has to be of type str!")
                 if len(element) < 2 or len(element) > 50:
                     raise ValueError("The models has to be of length >2 and < 50")
-                if not re.match(r'^[a-zA-Z\-\'\s.]+$', element):
-                    raise ValueError("The models can only contain letters, hyphens, apostrophes, spaces and dots.")
+                if not element.isprintable():
+                    raise ValueError("The models names have to be printable")
             
         # tags validation
         if "tags" in metadata:
@@ -92,8 +89,8 @@ class chromaDB_connector:
                     raise ValueError("The tags elements have to be of type str!")
                 if len(element) < 2 or len(element) > 50:
                     raise ValueError("The tag has to be of length >2 and < 50")
-                if not re.match(r'^[a-zA-Z\-\'\s.]+$', element):
-                    raise ValueError("The tag can only contain letters, hyphens, apostrophes, spaces and dots.")
+                if not element.isprintable():
+                    raise ValueError("The tags have to be printable")
             
         # languages validation
         if "languages" in metadata:
@@ -104,8 +101,8 @@ class chromaDB_connector:
                     raise ValueError("The languages elements have to be of type str!")
                 if len(element) < 2 or len(element) > 50:
                     raise ValueError("The language has to be of length >2 and < 50")
-                if not re.match(r'^[a-zA-Z\-\'\s.]+$', element):
-                    raise ValueError("The language can only contain letters, hyphens, apostrophes, spaces and dots.")
+                if not element.isprintable():
+                    raise ValueError("The languages have to be printable")
                 
         # ratings validation
         if "ratings" in metadata:
@@ -193,6 +190,3 @@ class chromaDB_connector:
         return version
     
     
-    
-connector = chromaDB_connector()
-print(connector.get_prompt_by_vector(query="test"))
