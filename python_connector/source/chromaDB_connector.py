@@ -5,11 +5,10 @@ import os
 from datetime import datetime
 
 
-
 class chromaDB_connector:
     def __init__(self):
-        self.__openai_ef = embedding_functions.OpenAIEmbeddingFunction( # TODO private attributes?
-                        api_key=os.environ.get('EF_API_KEY'), # YOU HAVE TO SET AN ENVIRONEMT VAR
+        self.__openai_ef = embedding_functions.OpenAIEmbeddingFunction(
+                        api_key=os.environ.get('EF_API_KEY'), # YOU HAVE TO SET AN ENVIRONEMT VAR TODO as parameter
                         api_base="https://hfu-prompt-improvement.openai.azure.com/",
                         api_type="azure",
                         api_version="2023-05-15",
@@ -25,24 +24,15 @@ class chromaDB_connector:
     def create_prompt(self, prompt:str, metadata: dict): 
         self._validate_metadata(metadata=metadata)
         
-        # get correct version
-        all_versions_of_prompt = self.get_prompt_by_metadata(filter = {"name":metadata["name"]}, top_n = 1, compile = False)
-        version = 1
-        for prompt_metadata in all_versions_of_prompt["metadatas"]:
-            if prompt_metadata["version"] >= version:
-                version = prompt_metadata["version"] +1
-        
         # enriching metadat
-        metadata["version"] = version
-        metadata["date_of_creation"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')   # TODO string oder float objekt?
-        #TODO Autor? Bentzerverwalung? und alle anderen
+        metadata["version"] = self._find_new_version(name=metadata["name"])
+        metadata["date_of_creation"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S') 
         
         self.__prompt_collection.add(
             documents=[prompt], 
             metadatas=metadata,
-            ids=[f"{metadata['name']}:{version}"]
+            ids=[f"{metadata['name']}:{metadata['version']}"]
         )
-        return # TODO sollte man irgendwie success returnen?
 
 
     def _validate_metadata(self, metadata):
@@ -78,8 +68,7 @@ class chromaDB_connector:
         
 
 
-    def get_prompt_by_vector(self, query:str, filter:dict = {}, top_n:int = 1, compile = True): #TODO signature
-        # TODO validate inputs or not?
+    def get_prompt_by_vector(self, query:str, filter:dict = {}, top_n:int = 1, compile = True): 
         
         # query prompts by vector
         query_result = self.__prompt_collection.query(
@@ -97,8 +86,6 @@ class chromaDB_connector:
 
 
     def get_prompt_by_metadata(self, filter:dict, top_n:int=1, compile = True):
-        # TODO validate inputs
-        
         query_result = self.__prompt_collection.get(
             limit=top_n,
             where=filter,
@@ -118,19 +105,34 @@ class chromaDB_connector:
 
         # loop throug all found prompt pieces
         for match in matches:
-            prompt_piece_name = match.group(1)
+            original_match = match.group(1)
 
-            # get prompt piece
-            query_result = self.__prompt_collection.get(
-                ids=[prompt_piece_name]
-            )
-            prompt_piece = query_result["metadatas"][0]["prompt"]
+            if original_match in prompt and original_match.count(":") == 1:
+                if original_match.split(":")[1] == "latest":
+                    prompt_piece_name = original_match.replace(":latest",":" + str(self._find_new_version(name=original_match.split(":")[0])-1))
+                else:
+                    prompt_piece_name = original_match
 
-            # replace prompt piece name with value
-            prompt = prompt.replace("{{" + prompt_piece_name + "}}", prompt_piece)
+                # get prompt piece
+                query_result = self.__prompt_collection.get(
+                    ids=[prompt_piece_name]
+                )
+                if len(query_result["documents"]) > 0:
+                    prompt_piece = query_result["documents"][0]
+
+                    # replace prompt piece name with value
+                    prompt = prompt.replace("{{" + original_match + "}}", prompt_piece)
             
         return prompt
-
-
-
-
+    
+    def _find_new_version(self, name:str):
+        all_versions_of_prompt = self.get_prompt_by_metadata(filter = {"name":name}, top_n = 1000, compile = False)
+        version = 1
+        for prompt_metadata in all_versions_of_prompt["metadatas"]:
+            if prompt_metadata["version"] >= version:
+                version = prompt_metadata["version"] +1
+                
+        return version
+    
+    
+    
