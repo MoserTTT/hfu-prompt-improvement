@@ -4,6 +4,11 @@ import re
 import os
 from datetime import datetime
 
+# validierungsshit
+# cleaner code
+# docs
+# max bescheid geben
+# email
 
 class chromaDB_connector:
     def __init__(self):
@@ -40,7 +45,7 @@ class chromaDB_connector:
         if len([key for key in metadata if key not in self.allowed_metadata_keys]) > 0:
             raise ValueError(f"You entered invalid keys in the metadata: {str([key for key in metadata if key not in self.allowed_metadata_keys])}!")
         
-        # name validation
+        # name validation, name is the only required key
         if type(metadata["name"]) != str:
             raise ValueError("The name has to be of type str!")
         if len(metadata["name"]) < 2 or len(metadata["name"]) > 50:
@@ -66,6 +71,59 @@ class chromaDB_connector:
             if not re.match(r'^[a-zA-Z\-\'\s]+$', metadata["author"]):
                 raise ValueError("The author can only contain letters, hyphens, apostrophes and spaces")
         
+        # models validation
+        if "models" in metadata:
+            if type(metadata["models"]) != list:
+                raise ValueError("The models have to be of type list!")
+            for element in metadata["models"]:
+                if type(element) != str:
+                    raise ValueError("The model elements has to be of type str!")
+                if len(element) < 2 or len(element) > 50:
+                    raise ValueError("The models has to be of length >2 and < 50")
+                if not re.match(r'^[a-zA-Z\-\'\s.]+$', element):
+                    raise ValueError("The models can only contain letters, hyphens, apostrophes, spaces and dots.")
+            
+        # tags validation
+        if "tags" in metadata:
+            if type(metadata["tags"]) != list:
+                raise ValueError("The tags have to be of type list!")
+            for element in metadata["tags"]:
+                if type(element) != str:
+                    raise ValueError("The tags elements have to be of type str!")
+                if len(element) < 2 or len(element) > 50:
+                    raise ValueError("The tag has to be of length >2 and < 50")
+                if not re.match(r'^[a-zA-Z\-\'\s.]+$', element):
+                    raise ValueError("The tag can only contain letters, hyphens, apostrophes, spaces and dots.")
+            
+        # languages validation
+        if "languages" in metadata:
+            if type(metadata["languages"]) != list:
+                raise ValueError("The languages have to be of type list!")
+            for element in metadata["languages"]:
+                if type(element) != str:
+                    raise ValueError("The languages elements have to be of type str!")
+                if len(element) < 2 or len(element) > 50:
+                    raise ValueError("The language has to be of length >2 and < 50")
+                if not re.match(r'^[a-zA-Z\-\'\s.]+$', element):
+                    raise ValueError("The language can only contain letters, hyphens, apostrophes, spaces and dots.")
+                
+        # ratings validation
+        if "ratings" in metadata:
+            if type(metadata["ratings"]) != dict:
+                raise ValueError("The ratings have to be of type dict!")
+            # TODO more validating for ratings
+        
+        # comments validation
+        if "comments" in metadata:
+            if type(metadata["comments"]) != list:
+                raise ValueError("The comments have to be of type list!")
+            for element in metadata["comments"]:
+                if type(element) != str:
+                    raise ValueError("The comments elements have to be of type str!")
+                if len(element) < 2 or len(element) > 50:
+                    raise ValueError("The comment has to be of length >2 and < 50")
+                if not element.isprintable():
+                    raise ValueError("The comment is not printable")
 
 
     def get_prompt_by_vector(self, query:str, filter:dict = {}, top_n:int = 1, compile = True): 
@@ -136,3 +194,5 @@ class chromaDB_connector:
     
     
     
+connector = chromaDB_connector()
+print(connector.get_prompt_by_vector(query="test"))
