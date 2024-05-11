@@ -61,7 +61,7 @@ class chromaDB_connector:
                     raise ValueError(f"The {key} is not printable")
                 if not printable and not re.match(r'^[a-zA-Z\-\'\s]+$', value):
                     raise ValueError(
-                        f"The {key} can only contain letters, - and '.")
+                        f"The {key} can only contain letters, - ,' and whitespaces.")
 
         # Function that validates lists
         def validate_list(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
