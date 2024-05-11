@@ -37,13 +37,17 @@ Queries the database by vector search.
 - **Returns:**
   - `dict`: Query results. Format: 
   
-  `{'ids': [['name:1']],
+```
+{
+ 'ids': [['name:1']],
  'distances': None,
  'metadatas': [[{'name': 'name', 'version': 1}]],
  'embeddings': None,
  'documents': [['test_prompt']],
  'uris': None,
- 'data': None}`
+ 'data': None
+}
+ ```
 
 #### `get_prompt_by_metadata(filter: dict, top_n: int = 1, compile=True) -> dict`
 
