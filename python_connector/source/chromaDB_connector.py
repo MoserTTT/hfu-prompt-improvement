@@ -5,7 +5,24 @@ from datetime import datetime
 
 
 class chromaDB_connector:
+    """
+    Connects to the ChromaDB database and provides methods to interact with prompts.
+
+    Args:
+        embedding_api_key (str): API key for the Azure OpenAI embedding deployment.
+        embedding_api_base (str, optional): Base URL for the embedding API. Defaults to "https://hfu-prompt-improvement.openai.azure.com/".
+        embedding_model_name (str, optional): Name of the embedding model to use. Defaults to "Test-Ada".
+    """
     def __init__(self, embedding_api_key: str, embedding_api_base: str = "https://hfu-prompt-improvement.openai.azure.com/", embedding_model_name: str = "Test-Ada"):
+        """
+        Initializes the ChromaDB connector.
+
+        Args:
+            embedding_api_key (str): API key for the OpenAI embedding service.
+            embedding_api_base (str, optional): Base URL for the embedding API. Defaults to "https://hfu-prompt-improvement.openai.azure.com/".
+            embedding_model_name (str, optional): Name of the embedding model to use. Defaults to "Test-Ada".
+        """
+        
         # creating the embedding function of the deployment
         self.__openai_ef = embedding_functions.OpenAIEmbeddingFunction(
             api_key=embedding_api_key,
@@ -26,8 +43,15 @@ class chromaDB_connector:
         self.allowed_metadata_keys = [
             "name", "description", "author", "models", "tags", "languages", "ratings", "comments"]
 
-    # This function saves prompts to the database
     def create_prompt(self, prompt: str, metadata: dict):
+        """
+        Saves a prompt to the database.
+
+        Args:
+            prompt (str): The prompt text to be saved.
+            metadata (dict): Metadata associated with the prompt.
+        """
+        
         # validate the metadata
         self.__validate_metadata(metadata=metadata)
 
@@ -44,8 +68,70 @@ class chromaDB_connector:
             ids=[f"{metadata['name']}:{metadata['version']}"]  # id is unique
         )
 
-    # This function validates the metadata as defined in the docs
+    def get_prompt_by_vector(self, query: str, filter: dict = {}, top_n: int = 1, compile=True):
+        """
+        Queries the database by vector search.
+
+        Args:
+            query (str): The query string.
+            filter (dict, optional): Additional filtering criteria. Defaults to {}.
+            top_n (int, optional): Number of results to return. Defaults to 1.
+            compile (bool, optional): Whether to compile prompts. Defaults to True.
+
+        Returns:
+            dict: Query results.
+        """
+        
+        # query prompts by vector
+        query_result = self.__prompt_collection.query(
+            query_texts=[query],
+            n_results=top_n,
+            where=filter,
+            include=["metadatas", "documents"],
+        )
+
+        # compile prompts
+        if compile:
+            for i, result in enumerate(query_result["documents"][0]):
+                query_result["documents"][0][i] = self.__compile_prompt(result)
+
+        return query_result
+
+    def get_prompt_by_metadata(self, filter: dict, top_n: int = 1, compile=True):
+        """
+        Retrieves prompts based on metadata filtering.
+
+        Args:
+            filter (dict): Metadata filtering criteria.
+            top_n (int, optional): Number of results to return. Defaults to 1.
+            compile (bool, optional): Whether to compile prompts. Defaults to True.
+
+        Returns:
+            dict: Query results.
+        """
+        
+        # get all prompts that follow the set filter
+        query_result = self.__prompt_collection.get(
+            limit=top_n,
+            where=filter,
+            include=["documents", "metadatas"],
+        )
+
+        # compile prompts
+        if compile:
+            for i, result in enumerate(query_result["documents"]):
+                query_result["documents"][i] = self.__compile_prompt(result)
+
+        return query_result
+
     def __validate_metadata(self, metadata):
+        """
+        Validates metadata fields.
+
+        Args:
+            metadata (dict): Metadata to be validated.
+        """
+        
         # Function that validates fields/keys
         def validate_field(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
             if required and key not in metadata:
@@ -88,43 +174,18 @@ class chromaDB_connector:
         # validate_list("ratings", metadata.get("ratings"), printable=True)  # TODO: add further validation
         validate_list("comments", metadata.get("comments"),
                       max_length=500, printable=True)
-
-    # This function uses vector search to query the database by a given query
-    def get_prompt_by_vector(self, query: str, filter: dict = {}, top_n: int = 1, compile=True):
-
-        # query prompts by vector
-        query_result = self.__prompt_collection.query(
-            query_texts=[query],
-            n_results=top_n,
-            where=filter,
-            include=["metadatas", "documents"],
-        )
-
-        # compile prompts
-        if compile:
-            for i, result in enumerate(query_result["documents"][0]):
-                query_result["documents"][0][i] = self.__compile_prompt(result)
-
-        return query_result
-
-    # This function uses filtering of metadata to return relevant prompts
-    def get_prompt_by_metadata(self, filter: dict, top_n: int = 1, compile=True):
-        # get all prompts that follow the set filter
-        query_result = self.__prompt_collection.get(
-            limit=top_n,
-            where=filter,
-            include=["documents", "metadatas"],
-        )
-
-        # compile prompts
-        if compile:
-            for i, result in enumerate(query_result["documents"]):
-                query_result["documents"][i] = self.__compile_prompt(result)
-
-        return query_result
-
-    # This function replaces prompt specifications ({{name:1}} with the prompt
+        
     def __compile_prompt(self, prompt: str):
+        """
+        Replaces prompt specifications with actual prompt values.
+
+        Args:
+            prompt (str): The prompt string with specifications.
+
+        Returns:
+            str: Compiled prompt.
+        """
+        
         # search for prompt pieces in prompt
         matches = re.finditer(r"\{{(.*?)\}}", prompt)
 
@@ -155,8 +216,17 @@ class chromaDB_connector:
 
         return prompt
 
-    # This function returns the next version number for a prompt name
     def __find_new_version(self, name: str):
+        """
+        Finds the next version number for a prompt name.
+
+        Args:
+            name (str): The name of the prompt.
+
+        Returns:
+            int: Next version number.
+        """
+        
         # get all prompts with this name
         all_versions_of_prompt = self.get_prompt_by_metadata(
             filter={"name": name}, top_n=1000, compile=False)
