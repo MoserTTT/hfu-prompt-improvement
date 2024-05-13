@@ -80,6 +80,24 @@ Validates metadata fields.
 - **Parameters:**
   - `metadata` (dict): Metadata to be validated.
 
+#### `__convert_metadata_lists_to_string(metadata: dict) -> dict`
+
+Converts all the lists of metadata into strings.
+
+- **Parameters:**
+  - `metadata` (dict): The metadata to convert.
+- **Returns:**
+  - `dict`: The converted metadata.
+
+#### `__convert_metadata_strings_to_list(metadata: dict) -> dict`
+
+Converts all the strings that should be lists of metadata into lists.
+
+- **Parameters:**
+  - `metadata` (dict): The metadata to convert.
+- **Returns:**
+  - `dict`: The converted metadata.
+
 #### `__compile_prompt(prompt: str) -> str`
 
 Replaces prompt specifications with actual prompt values.

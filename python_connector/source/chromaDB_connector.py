@@ -13,6 +13,7 @@ class chromaDB_connector:
         embedding_api_base (str, optional): Base URL for the embedding API. Defaults to "https://hfu-prompt-improvement.openai.azure.com/".
         embedding_model_name (str, optional): Name of the embedding model to use. Defaults to "Test-Ada".
     """
+
     def __init__(self, embedding_api_key: str, embedding_api_base: str = "https://hfu-prompt-improvement.openai.azure.com/", embedding_model_name: str = "Test-Ada"):
         """
         Initializes the ChromaDB connector.
@@ -22,7 +23,7 @@ class chromaDB_connector:
             embedding_api_base (str, optional): Base URL for the embedding API. Defaults to "https://hfu-prompt-improvement.openai.azure.com/".
             embedding_model_name (str, optional): Name of the embedding model to use. Defaults to "Test-Ada".
         """
-        
+
         # creating the embedding function of the deployment
         self.__openai_ef = embedding_functions.OpenAIEmbeddingFunction(
             api_key=embedding_api_key,
@@ -51,9 +52,12 @@ class chromaDB_connector:
             prompt (str): The prompt text to be saved.
             metadata (dict): Metadata associated with the prompt.
         """
-        
+
         # validate the metadata
         self.__validate_metadata(metadata=metadata)
+
+        # convert all lists to strings, as it is impossible to save lists in chromadb
+        metadata = self.__convert_metadata_lists_to_string(metadata=metadata)
 
         # enriching metadata
         metadata["version"] = self.__find_new_version(
@@ -81,7 +85,7 @@ class chromaDB_connector:
         Returns:
             dict: Query results.
         """
-        
+
         # query prompts by vector
         query_result = self.__prompt_collection.query(
             query_texts=[query],
@@ -90,10 +94,13 @@ class chromaDB_connector:
             include=["metadatas", "documents"],
         )
 
-        # compile prompts
-        if compile:
-            for i, result in enumerate(query_result["documents"][0]):
-                query_result["documents"][0][i] = self.__compile_prompt(result)
+        # compile prompts and convert list strings back to lists
+        for i, result in enumerate(query_result["documents"][0]):
+            if compile:
+                query_result["documents"][0][i] = self.__compile_prompt(
+                    result)  # compile prompts
+            query_result["metadatas"][0][i] = self.__convert_metadata_strings_to_list(
+                query_result["metadatas"][0][i])  # convert list strings back to lists
 
         return query_result
 
@@ -109,7 +116,7 @@ class chromaDB_connector:
         Returns:
             dict: Query results.
         """
-        
+
         # get all prompts that follow the set filter
         query_result = self.__prompt_collection.get(
             limit=top_n,
@@ -117,21 +124,24 @@ class chromaDB_connector:
             include=["documents", "metadatas"],
         )
 
-        # compile prompts
-        if compile:
-            for i, result in enumerate(query_result["documents"]):
-                query_result["documents"][i] = self.__compile_prompt(result)
+        # compile prompts and convert list strings back to lists
+        for i, result in enumerate(query_result["documents"]):
+            if compile:
+                query_result["documents"][i] = self.__compile_prompt(
+                    result)    # compile prompt
+            query_result["metadatas"][i] = self.__convert_metadata_strings_to_list(
+                query_result["metadatas"][i])  # convert list strings back to lists
 
         return query_result
 
-    def __validate_metadata(self, metadata):
+    def __validate_metadata(self, metadata: dict):
         """
         Validates metadata fields.
 
         Args:
             metadata (dict): Metadata to be validated.
         """
-        
+
         # Function that validates fields/keys
         def validate_field(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
             if required and key not in metadata:
@@ -145,9 +155,9 @@ class chromaDB_connector:
                         f"The {key} has to be of length between {min_length} and {max_length}")
                 if printable and not value.isprintable():
                     raise ValueError(f"The {key} is not printable")
-                if not printable and not re.match(r'^[a-zA-Z\-\'\s]+$', value):
+                if not printable and not re.match(r'^[a-zA-Z0-9\-\'\s]+$', value):
                     raise ValueError(
-                        f"The {key} can only contain letters, - ,' and whitespaces.")
+                        f"The {key} can only contain letters, numbers, - ,' and whitespaces.")
 
         # Function that validates lists
         def validate_list(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
@@ -174,7 +184,43 @@ class chromaDB_connector:
         # validate_list("ratings", metadata.get("ratings"), printable=True)  # TODO: add further validation
         validate_list("comments", metadata.get("comments"),
                       max_length=500, printable=True)
-        
+
+    def __convert_metadata_lists_to_string(self, metadata: dict):
+        """
+        Converts all the lists of metadata into strings
+
+        Args:
+            metadata (dict): The metadata to convert.
+
+        Returns:
+            dict: The converted metadata.
+        """
+
+        # loop through all keys in metadata and convert if they are of type list by specification
+        for key, value in metadata.items():
+            if key in ["models", "tags", "languages", "comments"]:
+                # using \n as it is forbbiden as input and will never occur naturally
+                metadata[key] = '\n'.join(value)
+        return metadata
+
+    def __convert_metadata_strings_to_list(self, metadata: dict):
+        """
+        Converts all the strings that should be lists of metadata into lists
+
+        Args:
+            metadata (dict): The metadata to convert.
+
+        Returns:
+            dict: The converted metadata.
+        """
+
+        # loop through all keys in metadata and convert if they are of type list by specification
+        for key, value in metadata.items():
+            if key in ["models", "tags", "languages", "comments"]:
+                # using \n as it is forbbiden as input and will never occur naturally
+                metadata[key] = value.split('\n')
+        return metadata
+
     def __compile_prompt(self, prompt: str):
         """
         Replaces prompt specifications with actual prompt values.
@@ -185,7 +231,7 @@ class chromaDB_connector:
         Returns:
             str: Compiled prompt.
         """
-        
+
         # search for prompt pieces in prompt
         matches = re.finditer(r"\{{(.*?)\}}", prompt)
 
@@ -226,7 +272,7 @@ class chromaDB_connector:
         Returns:
             int: Next version number.
         """
-        
+
         # get all prompts with this name
         all_versions_of_prompt = self.get_prompt_by_metadata(
             filter={"name": name}, top_n=1000, compile=False)
