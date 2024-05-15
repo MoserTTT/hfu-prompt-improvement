@@ -158,7 +158,7 @@ class chromaDB_connector:
                 if not printable and not re.match(r'^[a-zA-Z0-9\-\'\s]+$', value):
                     raise ValueError(
                         f"The {key} can only contain letters, numbers, - ,' and whitespaces.")
-
+ 
         # Function that validates lists
         def validate_list(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
             if key in metadata:
@@ -174,7 +174,7 @@ class chromaDB_connector:
                 f"You entered invalid keys in the metadata: {str([key for key in metadata if key not in self.allowed_metadata_keys])}!")
 
         # validating each key
-        validate_field("name", metadata.get("name"), required=True)
+        validate_field("name", metadata.get("name"), required=True,printable=True)
         validate_field("description", metadata.get(
             "description"), max_length=500, printable=True)
         validate_field("author", metadata.get("author"))
