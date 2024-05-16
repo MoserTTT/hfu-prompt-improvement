@@ -25,9 +25,6 @@ class Test_chromaDB_connector(unittest.TestCase):
             "name": "  "
         },
         {
-            "name": "@#$%^&*()-_=+[]{};:',.<>?/|`~"
-        },
-        {
             "name": "Create Documentation for Java or C Sharp",
             "description": "My first 12346790756494ß59395ß93ß95ß59359935ßß35ß335ß393###****=$%&&/(1234567890!@#$%^&*()-_=+[]{};:',.<>?/|`~) Description.",
             "author": "Marius Longasslastnamewhatthehellsheeeeeeeeeeeeesh",
@@ -38,6 +35,9 @@ class Test_chromaDB_connector(unittest.TestCase):
         },
     ]
     invalid_metadata_list = [
+        {
+            "name": "@#$%^&*()-_=+[]{};:',.<>?/|`~"
+        },
         {
             "name": ""
         },
