@@ -151,7 +151,6 @@ The Format is a dict like:
 - Description: A description of the prompt. Provides additional context.
 - Type: str
 - Length: Up to 500 characters
-- Printable: Yes
 
 #### Author
 - Description: The author of the prompt.
@@ -163,19 +162,16 @@ The Format is a dict like:
 - Description: Models associated with the prompt.
 - Type: A list of str
 - Str length: Between 2 and 50 characters
-- Printable: Yes
 
 #### Tags
 - Description: Tags associated with the prompt.
 - Type: A list of str
 - Str length: Between 2 and 50 characters
-- Printable: Yes
 
 #### Languages
 - Description: Languages used in the prompt.
 - Type: A list of str
 - Str length: Between 2 and 50 characters
-- Printable: Yes
 
 #### Ratings
 - Description: Ratings associated with the prompt.
@@ -185,7 +181,6 @@ The Format is a dict like:
 - Description: Comments associated with the prompt.
 - Type: A list of str
 - Str length: Up to 500 characters
-- Printable: Yes
 
 
 ## Usage Example

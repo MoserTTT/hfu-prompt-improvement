@@ -143,7 +143,7 @@ class chromaDB_connector:
         """
 
         # Function that validates fields/keys
-        def validate_field(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
+        def validate_field(key, value, type=str, required=False, min_length=2, max_length=50, has_to_pass_regex=False):
             if required and key not in metadata:
                 raise ValueError(f"{key} has to be set in metadata!")
             if key in metadata:
@@ -153,12 +153,12 @@ class chromaDB_connector:
                 if len(value) < min_length or len(value) > max_length:
                     raise ValueError(
                         f"The {key} has to be of length between {min_length} and {max_length}")
-                if printable and not value.isprintable():
+                if not value.isprintable():
                     raise ValueError(f"The {key} is not printable")
-                if not printable and not re.match(r'^[a-zA-Z0-9\-\'\s]+$', value):
+                if has_to_pass_regex and not re.match(r'^[a-zA-Z0-9\-\'\s]+$', value):
                     raise ValueError(
                         f"The {key} can only contain letters, numbers, - ,' and whitespaces.")
- 
+
         # Function that validates lists
         def validate_list(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
             if key in metadata:
@@ -166,7 +166,7 @@ class chromaDB_connector:
                     raise ValueError(f"The {key} has to be of type list!")
                 for element in value:
                     validate_field(key=key, value=element, type=type, required=required,
-                                   min_length=min_length, max_length=max_length, printable=printable)
+                                   min_length=min_length, max_length=max_length, has_to_pass_regex=printable)
 
         # check if there are any invalid keys in metadata
         if len([key for key in metadata if key not in self.allowed_metadata_keys]) > 0:
@@ -174,16 +174,18 @@ class chromaDB_connector:
                 f"You entered invalid keys in the metadata: {str([key for key in metadata if key not in self.allowed_metadata_keys])}!")
 
         # validating each key
-        validate_field("name", metadata.get("name"), required=True,printable=True)
+        validate_field("name", metadata.get("name"),
+                       required=True, has_to_pass_regex=True)
         validate_field("description", metadata.get(
-            "description"), max_length=500, printable=True)
-        validate_field("author", metadata.get("author"))
-        validate_list("models", metadata.get("models"), printable=True)
-        validate_list("tags", metadata.get("tags"), printable=True)
-        validate_list("languages", metadata.get("languages"), printable=True)
-        # validate_list("ratings", metadata.get("ratings"), printable=True)  # TODO: add further validation
+            "description"), max_length=500)
+        validate_field("author", metadata.get(
+            "author"), has_to_pass_regex=True)
+        validate_list("models", metadata.get("models"))
+        validate_list("tags", metadata.get("tags"))
+        validate_list("languages", metadata.get("languages"))
+        # validate_list("ratings", metadata.get("ratings"))  # TODO: add further validation
         validate_list("comments", metadata.get("comments"),
-                      max_length=500, printable=True)
+                      max_length=500)
 
     def __convert_metadata_lists_to_string(self, metadata: dict):
         """
