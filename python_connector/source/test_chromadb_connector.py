@@ -90,7 +90,7 @@ class Test_chromaDB_connector(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.db = cDB.chromaDB_connector("25978b3afbb74c359f29d3003915917f")
+        cls.db = cDB.chromaDB_connector(os.getenv("EF_API_KEY"))
 
     @classmethod
     def tearDownClass(cls):
