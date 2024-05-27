@@ -1,0 +1,29 @@
+# Use the official Python image from the Docker Hub
+FROM python:3.11-slim
+
+# Define a build-time variable
+ARG EF_API_KEY
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements.txt file into the container at /app
+COPY ./source/requirements.txt .
+
+# Install the dependencies
+RUN pip install -r requirements.txt 
+#could use --no-cache-dir to make the image smaller
+
+# Copy the rest of the application code into the container at /app
+COPY . .
+
+# Expose the port that the Flask app runs on
+EXPOSE 5000
+
+# Set environment variables to run the Flask app
+# ENV FLASK_APP=main.py
+# ENV FLASK_RUN_HOST=0.0.0.0
+ENV EF_API_KEY=$EF_API_KEY
+
+# Run the Flask app
+CMD ["python", "-m", "flask", "--app", "./source/main.py", "run", "--port=5000", "--host=0.0.0.0"]
