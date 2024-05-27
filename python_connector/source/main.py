@@ -6,7 +6,7 @@ import ast
 class main:
     
     def __init__(self):
-        self.db = chromaDB_connector.chromaDB_connector(os.getenv("EF_API_KEY"))
+        self.db = chromaDB_connector.chromaDB_connector(embedding_api_key=os.getenv("EF_API_KEY"))
         self.app = Flask(__name__)
         self.setup_routes()
     
@@ -29,7 +29,7 @@ class main:
                 return jsonify({"error": repr(error)}), 500
             except Exception as unexpected_error:
                 unexpected_error = repr(unexpected_error)
-                return jsonify({f"error":"Unexpected Error: {unexpected_error}"}), 500
+                return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
     
         @self.app.route("/prompt_by_metadata", methods=["GET"])
         def call_get_by_metadata():
@@ -54,7 +54,7 @@ class main:
                 return jsonify({"error": repr(error)}), 500
             except Exception as unexpected_error:
                 unexpected_error = repr(unexpected_error)
-                return jsonify({f"error":"Unexpected Error: {unexpected_error}"}), 500
+                return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
             
         
         @self.app.route("/prompt_by_vector", methods=["GET"])
@@ -83,11 +83,11 @@ class main:
                 return jsonify({"error": repr(error)}), 500
             except Exception as unexpected_error:
                 unexpected_error = repr(unexpected_error)
-                return jsonify({f"error":"Unexpected Error: {unexpected_error}"}), 500
+                return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
 
 # The Flask App ("app") must be exposed at Module level
 backend_app = main()            
 app = backend_app.app
 
 if __name__ == "__main__":
-    backend_app.app.run(debug=True, use_reloader=False)
+    backend_app.app.run(debug=True, use_reloader=False, host="0.0.0.0", port=5000)
