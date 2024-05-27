@@ -33,21 +33,22 @@ class main:
     
         @self.app.route("/prompt_by_metadata", methods=["GET"])
         def call_get_by_metadata():
+            params = {}
             filter = request.args.get("filter")
             top_n = request.args.get("top_n")
             compile = request.args.get("compile")
             if filter is None:
                 return jsonify({"error":"Missing required Parameter"}), 400
-            # Need to discuss the following lines until the try block. This looks like shit but it has to be done? -Tobi M
-            if top_n is None:
-                top_n = 1
-            if compile is None:
-                compile = True
             filter = ast.literal_eval(filter)
-            top_n = ast.literal_eval(top_n)
-            compile = ast.literal_eval(compile)
+            params["filter"] = filter           
+            if top_n is str:    # Otherwise None 
+                top_n = ast.literal_eval(top_n)
+                params["top_n"] = top_n
+            if compile is str:
+                compile = ast.literal_eval(compile)      
+                params["compile"] = compile
             try:
-                result =  self.db.get_prompt_by_metadata(filter, top_n, compile)
+                result =  self.db.get_prompt_by_metadata(**params)
                 return jsonify(result), 200
             except ValueError as error:
                 return jsonify({"error": repr(error)}), 500
@@ -58,24 +59,25 @@ class main:
         
         @self.app.route("/prompt_by_vector", methods=["GET"])
         def call_get_by_vector():
+            params = {}
             query = request.args.get("query")
             filter = request.args.get("filter")
             top_n = request.args.get("top_n")
             compile = request.args.get("compile")
             if query is None:
                 return jsonify({"error":"Missing required Parameter"}), 400
-            # Need to discuss the following lines until the try block. This looks like shit but it has to be done? -Tobi M
-            if filter is None:
-                filter = {}
-            if top_n is None:
-                top_n = 1
-            if compile is None:
-                compile = True
-            filter = ast.literal_eval(filter)
-            top_n = ast.literal_eval(top_n)
-            compile = ast.literal_eval(compile)
+            params["query"] = query
+            if filter is str:   # Otherwise None 
+                filter = ast.literal_eval(filter)      
+                params["filter"] = filter
+            if top_n is str:    
+                top_n = ast.literal_eval(top_n)
+                params["top_n"] = top_n
+            if compile is str:
+                compile = ast.literal_eval(compile)      
+                params["compile"] = compile
             try:
-                result = self.db.get_prompt_by_vector(query, filter, top_n, compile)
+                result = self.db.get_prompt_by_vector(**params)
                 return jsonify(result), 200
             except ValueError as error:
                 return jsonify({"error": repr(error)}), 500
