@@ -1,6 +1,7 @@
 import chromaDB_connector
 from flask import Flask, request, jsonify
 import os
+import ast
 
 class main:
     
@@ -18,6 +19,7 @@ class main:
         def call_create_prompt():    
             prompt = request.args.get("prompt")
             metadata = request.args.get("metadata")
+            metadata = ast.literal_eval(metadata)
             if prompt is None or metadata is None:
                 return jsonify({"error":"Missing required Parameter"}), 400
             try:
@@ -41,6 +43,9 @@ class main:
                 top_n = 1
             if compile is None:
                 compile = True
+            filter = ast.literal_eval(filter)
+            top_n = ast.literal_eval(top_n)
+            compile = ast.literal_eval(compile)
             try:
                 result =  self.db.get_prompt_by_metadata(filter, top_n, compile)
                 return jsonify(result), 200
@@ -60,12 +65,15 @@ class main:
             if query is None:
                 return jsonify({"error":"Missing required Parameter"}), 400
             # Need to discuss the following lines until the try block. This looks like shit but it has to be done? -Tobi M
+            if filter is None:
+                filter = {}
             if top_n is None:
                 top_n = 1
             if compile is None:
                 compile = True
-            if filter is None:
-                filter = {}
+            filter = ast.literal_eval(filter)
+            top_n = ast.literal_eval(top_n)
+            compile = ast.literal_eval(compile)
             try:
                 result = self.db.get_prompt_by_vector(query, filter, top_n, compile)
                 return jsonify(result), 200
@@ -80,4 +88,4 @@ backend_app = main()
 app = backend_app.app
 
 if __name__ == "__main__":
-    backend_app.app.run(debug=True)
+    backend_app.app.run(debug=True, use_reloader=False)
