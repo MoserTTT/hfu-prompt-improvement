@@ -17,11 +17,11 @@ class main:
         
         @self.app.route("/set_prompt", methods=["POST"])
         def call_create_prompt():    
-            prompt = request.args.get("prompt")
-            metadata = request.args.get("metadata")
-            metadata = ast.literal_eval(metadata)
-            if prompt is None or metadata is None:
+            data = request.get_json()
+            if not data or "prompt" not in data or "metadata" not in data:
                 return jsonify({"error":"Missing required Parameter"}), 400
+            prompt = data["prompt"]
+            metadata = data["metadata"]
             try:
                 self.db.create_prompt(prompt, metadata)
                 return jsonify({"message": "Prompt added successfully"}), 200
