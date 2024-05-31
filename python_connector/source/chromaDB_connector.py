@@ -34,7 +34,7 @@ class chromaDB_connector:
         )
 
         # getting the client
-        self.__client = chromadb.PersistentClient(path="chromadb_persistance")
+        self.__client = chromadb.HttpClient(host='chroma', port=8000)
 
         # getting or creating the collection
         self.__prompt_collection = self.__client.get_or_create_collection(

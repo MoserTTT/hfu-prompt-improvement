@@ -1,0 +1,19 @@
+services:
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    volumes:
+      - ./chroma-index:/chroma/chroma
+    ports:
+      - 5555:8000
+
+  python-connector:
+    build:
+        context: .
+        dockerfile: Dockerfile
+        args:
+          EF_API_KEY: ${EF_API_KEY}
+    image: prompt_management_back_end
+    ports:
+      - 5000:5000
+    depends_on:
+      - chroma
