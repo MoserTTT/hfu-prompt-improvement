@@ -1,4 +1,4 @@
-import chromaDB_connector
+from . import chromaDB_connector
 from flask import Flask, request, jsonify
 import os
 import ast
