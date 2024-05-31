@@ -43,7 +43,16 @@ You can interact with the backend through its REST API. Here are some simple exa
 To create a prompt, use the following URL:
 
 ```sh
-http://127.0.0.1:5000/set_prompt?prompt=Schreibe eine REST Schnittstelle in python&metadata={"name":"test-rest-prompt"}
+http://127.0.0.1:5000/set_prompt
+```
+
+and the following body:
+
+```json
+{
+    "prompt":"Wie erstellt man eine REST Schnittstelle?",
+    "metadata":{"name":"rest-prompt"}
+}
 ```
 
 ### Searching by Metadata
