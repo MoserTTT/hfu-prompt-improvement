@@ -62,7 +62,7 @@ const FONTS = ({
    titleMedium: {
       /* Title Medium - Roboto Medium 16/24 . +0.15 */
       fontFamily: 'Roboto',
-      fontStyle: 'medium',
+      fontStyle: 'normal',
       fontWeight: 500,
       fontSize: 16
    },
@@ -70,7 +70,7 @@ const FONTS = ({
    titleSmall: {
       /* Title Small - Roboto Medium 14/20 . +0.1 */
       fontFamily: 'Roboto',
-      fontStyle: 'medium',
+      fontStyle: 'normal',
       fontWeight: 500,
       fontSize: 14
    },
@@ -79,7 +79,7 @@ const FONTS = ({
    labelLarge: {
       /* Label Large - Roboto Medium 14/20 . +0.1 */
       fontFamily: 'Roboto',
-      fontStyle: 'medium',
+      fontStyle: 'normal',
       fontWeight: 500,
       fontSize: 14,
       letterSpacing: 0.1
@@ -88,7 +88,7 @@ const FONTS = ({
    labelMedium: {
       /* Label Medium - Roboto Medium 12/16 . +0.5 */
       fontFamily: 'Roboto',
-      fontStyle: 'medium',
+      fontStyle: 'normal',
       fontWeight: 500,
       fontSize: 12,
       lineHeight: 16,
@@ -108,7 +108,7 @@ const FONTS = ({
    bodyLarge: {
       /* Body Large - Roboto 16/24 . +0.5 */
       fontFamily: 'Roboto',
-      fontStyle: 'medium',
+      fontStyle: 'normal',
       fontWeight: 400,
       fontSize: 16,
       letterSpacing: 0.5
