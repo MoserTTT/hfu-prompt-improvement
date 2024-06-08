@@ -183,7 +183,7 @@ class chromaDB_connector:
         validate_list("models", metadata.get("models"))
         validate_list("tags", metadata.get("tags"))
         validate_list("languages", metadata.get("languages"))
-        # validate_list("ratings", metadata.get("ratings"))  # TODO: add further validation
+        #validate_list("ratings", metadata.get("ratings"))  # TODO: add further validation
         validate_list("comments", metadata.get("comments"),
                       max_length=500)
 
@@ -200,7 +200,7 @@ class chromaDB_connector:
 
         # loop through all keys in metadata and convert if they are of type list by specification
         for key, value in metadata.items():
-            if key in ["models", "tags", "languages", "comments"]:
+            if key in ["models", "tags", "languages", "comments", "ratings"]:
                 # using \n as it is forbbiden as input and will never occur naturally
                 metadata[key] = '\n'.join(value)
         return metadata
@@ -218,7 +218,7 @@ class chromaDB_connector:
 
         # loop through all keys in metadata and convert if they are of type list by specification
         for key, value in metadata.items():
-            if key in ["models", "tags", "languages", "comments"]:
+            if key in ["models", "tags", "languages", "comments", "ratings"]:
                 # using \n as it is forbbiden as input and will never occur naturally
                 metadata[key] = value.split('\n')
         return metadata
