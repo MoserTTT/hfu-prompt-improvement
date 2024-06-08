@@ -7,4 +7,4 @@ const COLORS = {
     blue: "#007AFF",
   };
   
-  export { COLORS };
+  export default COLORS;

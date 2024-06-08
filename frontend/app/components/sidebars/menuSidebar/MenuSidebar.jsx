@@ -1,5 +1,5 @@
+import COLORS from "../../../../styles/theme";
 import { BuildPromptIcon, SettingsIcon } from "../../../../assets/icons/components";
-import { COLORS } from "../../../../styles/theme";
 import { Drawer, ListItem, ListItemIcon, ListItemText, Typography, List, Divider } from "@material-ui/core";
 import styles from "./styles/menuSidebar.style";
 import { useNavigate } from "@remix-run/react";
@@ -40,7 +40,6 @@ const MenuSidebar = ({ onToggle }) => {
   ];
 
   function onChangeCollapse(){
-    console.log(isCollapsed);
     setIsCollapsed(!isCollapsed);
     onToggle(isCollapsed);
   }

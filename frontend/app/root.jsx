@@ -12,10 +12,10 @@ import { useState } from "react";
 
 export function Layout({ children }) {
 
-  const [sidebarWidth, setSidebarWidth] = useState('290px');
+  const [sidebarWidth, setSidebarWidth] = useState('260px');
 
   const toggleSidebar = (isCollapsed) => {
-    setSidebarWidth(isCollapsed? '290px' : '130px');
+    setSidebarWidth(isCollapsed? '260px' : '110px');
   }
 
   return (

@@ -1,5 +1,5 @@
 import FONTS from "../../../../../styles/fonts";
-import { COLORS } from "../../../../../styles/theme";
+import COLORS from "../../../../../styles/theme";
 
 import "./menuSidebar.style.css"
 
