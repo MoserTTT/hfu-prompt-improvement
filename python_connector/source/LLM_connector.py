@@ -96,6 +96,7 @@ score: """
                 continue 
             
             response_split = response.split("advice:")
+            scores.append(metric)
             scores.append(response_split[0].strip())
             scores.append(response_split[1].strip())
             
@@ -106,9 +107,8 @@ score: """
         
         body = {
             "prompt":prompt_to_eval,
-            "metadata":previous_metadata   #TODO without
+            "metadata":previous_metadata  
         }
-        print(body)
         
         response = requests.post(self.create_prompt_url, json=body)
 
