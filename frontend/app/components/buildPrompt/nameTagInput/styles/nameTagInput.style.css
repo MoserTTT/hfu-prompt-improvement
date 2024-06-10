@@ -1,0 +1,19 @@
+/*
+    Override style classes from @mui
+*/
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+    padding: 14px 13px 14px 13px !important;
+}
+
+.css-1g24dm6-MuiInputBase-input-MuiOutlinedInput-input {
+    padding: 14px 13px 14px 13px !important;
+}
+
+.css-14s5rfu-MuiFormLabel-root-MuiInputLabel-root {
+    line-height: normal !important;
+}
+
+.css-niqf4j-MuiStack-root {
+    flex-wrap: wrap;
+}

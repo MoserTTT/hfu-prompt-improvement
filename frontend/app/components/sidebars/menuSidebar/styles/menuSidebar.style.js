@@ -1,5 +1,5 @@
 import FONTS from "../../../../../styles/fonts";
-import { COLORS } from "../../../../../styles/theme";
+import COLORS from "../../../../../styles/theme";
 
 import "./menuSidebar.style.css"
 
@@ -33,6 +33,17 @@ const styles = {
         ...FONTS.displaySmall
     },
 
+    list: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+
+    listItemButton: {
+        paddingLeft: 30,
+        paddingRight: 30,
+        marginTop: 20
+    },
+
     listItemText: {
         ...FONTS.headlineSmall,
     },
@@ -42,7 +53,7 @@ const styles = {
         fontStyle: 'normal',
         fontWeight: 700,
         fontSize: 24,
-        color: COLORS.blue
+        color: COLORS.blue,
     }
 };
 

@@ -78,6 +78,7 @@ const BuildPrompt = ({ someProp }) => {
 How do I use a defined Component?
 
 Const Components:
+
 ```jsx
 import WritePrompt from "..."
 
@@ -139,7 +140,7 @@ export default Counter;
 
 The project follows a typical React-Remix Vite setup, organized as follows:
 
-```
+```md
 frontend
 │
 │─── .eslintrc.cjs

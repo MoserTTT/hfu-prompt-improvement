@@ -1,6 +1,6 @@
+import COLORS from "../../../../styles/theme";
 import { BuildPromptIcon, SettingsIcon } from "../../../../assets/icons/components";
-import { COLORS } from "../../../../styles/theme";
-import { Drawer, ListItem, ListItemIcon, ListItemText, Typography, List, Divider } from "@material-ui/core";
+import { Drawer, ListItemIcon, ListItemText, Typography, List, Divider, ListItemButton } from "@mui/material";
 import styles from "./styles/menuSidebar.style";
 import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
@@ -14,7 +14,6 @@ const MenuSidebar = ({ onToggle }) => {
   // track the currently selected menu item index
   const [selectedItem, setSelectedItem] = useState(0);
 
-  // 
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Define menu items as an array of objects
@@ -40,7 +39,6 @@ const MenuSidebar = ({ onToggle }) => {
   ];
 
   function onChangeCollapse(){
-    console.log(isCollapsed);
     setIsCollapsed(!isCollapsed);
     onToggle(isCollapsed);
   }
@@ -59,7 +57,7 @@ const MenuSidebar = ({ onToggle }) => {
         variant="permanent"
         anchor="left" >
         <div style={styles.navHeader}>
-          <img 
+          <img
             style={styles.navHeaderLogo}
             src="../../../../assets/icons/gft_icon.png" 
             alt="GFT Logo"/>
@@ -78,28 +76,25 @@ const MenuSidebar = ({ onToggle }) => {
             />
         </div>
         <Divider />
-        <List> {/* List of menu items */}
+        <List
+          style={ styles.list }>
           {menuItems.map((item, index) => (
-            <div 
-              key={item.text} 
-              className="listItem">
-              <ListItem
-                key={item.text}
-                className="selectAble"
-                onClick={() => onListItemClick(index, item.path)}>
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                {
-                  !isCollapsed ? (
-                    <ListItemText
-                    disableTypography
-                    style={selectedItem === index ? styles.selectedListItemText : styles.listItemText}
-                    primary={item.text}
-                  ></ListItemText>
-                  ) : ""
-                }
-                
-              </ListItem>
-            </div>
+            <ListItemButton
+              key={item.text}
+              style={ styles.listItemButton }
+              onClick={() => onListItemClick(index, item.path)}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              {
+                !isCollapsed ? (
+                  <ListItemText
+                  disableTypography
+                  style={selectedItem === index ? styles.selectedListItemText : styles.listItemText}
+                  primary={item.text}
+                ></ListItemText>
+                ) : ""
+              }
+              
+            </ListItemButton>
           ))}
         </List>
       </Drawer>
