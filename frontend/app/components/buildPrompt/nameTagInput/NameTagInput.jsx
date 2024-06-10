@@ -2,7 +2,8 @@ import { useState } from "react";
 import AddIcon from "../../../../assets/icons/components/AddIcon";
 import styles from "./styles/nameTagInput.style";
 
-import { TextField, Chip, Stack } from "@mui/material/";
+import { Chip, Stack } from "@mui/material";
+import TextField from '@mui/material/TextField';
 
 import COLORS from "../../../../styles/theme";
 
@@ -34,40 +35,38 @@ const NameTagInput = () => {
         <div>
             <div style={ styles.upperSection }>
                 <TextField
-                    id="nameInput"
+                    autoFocus
+                    id='nameInput'
+                    label='Name your prompt'
+                    variant='standard'
                     style={ styles.nameInput }
-                    label="Name your prompt" 
-                    variant="outlined" 
                 />
                 <TextField
-                    id="tagInput"
+                    id='tagInput'
+                    label='Add tag'
+                    type='search'
+                    variant='standard'
                     style={ styles.tagInput }
-                    label="Add tag"
-                    type="search"
-                    variant="outlined" 
                 />
                 <button 
                     style={ styles.addButton } 
                     onMouseEnter={ handleHover } 
                     onMouseLeave={ handleHover }
-                    onClick={ handleAddTag } 
-                >
+                    onClick={ handleAddTag }  >
                     <AddIcon color={addIconColor}/>
                 </button>
             </div>
 
-            <div style={ styles.tags }>
-                <Stack direction="row" spacing={1}>
-                    { tags.map((tag, index) => (
-                        <Chip
-                            key={ index + tag }
-                            style={ styles.tag }
-                            label={ tag }
-                            variant="outlined"
-                            onDelete={() => handleDeleteTag(tag)}/>
-                    ))}
-                </Stack>
-            </div>
+            <Stack direction="row" spacing={1}>
+                { tags.map((tag, index) => (
+                    <Chip
+                        key={ index + tag }
+                        style={ styles.tag }
+                        label={ tag }
+                        variant="outlined"
+                        onDelete={() => handleDeleteTag(tag)}/>
+                ))}
+            </Stack>
         </div>
     );
 }

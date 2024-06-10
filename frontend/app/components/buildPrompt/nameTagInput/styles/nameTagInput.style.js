@@ -1,12 +1,11 @@
 //import COLORS from '../../../../styles/theme.js'
 //import FONTS from '../../../../styles/fonts.js'
 
-import "./nameTagInput.style.css"
-
 const styles = {
 
     upperSection: {
         display: 'flex',
+        alignItems: 'center'
     },
 
     nameInput: {
@@ -16,7 +15,7 @@ const styles = {
 
     tagInput: {
         width: 160,
-        marginRight: 10
+        marginRight: 20
     },
 
     addButton: {
@@ -29,7 +28,9 @@ const styles = {
     },
 
     tag: {
-        margin: '5px'
+        marginTop: '20px',
+        marginRight: '10px',
+        marginBottom: '15px'
     }
 };
 export default styles;

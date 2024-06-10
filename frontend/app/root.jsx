@@ -8,15 +8,23 @@ import {
 
 import { MenuSidebar } from './components';
 import styles from "./layout.style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+"use client";
 
 export function Layout({ children }) {
 
   const [sidebarWidth, setSidebarWidth] = useState('260px');
 
+  const [isClient, setIsClient] = useState(false);
+
   const toggleSidebar = (isCollapsed) => {
     setSidebarWidth(isCollapsed? '260px' : '110px');
   }
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <html lang="en">
@@ -29,9 +37,12 @@ export function Layout({ children }) {
       </head>
       <body>
         <div style={ styles.root }>
-          <div style={{ width: sidebarWidth }}>
-            <MenuSidebar onToggle={toggleSidebar}/>
-          </div>
+          { // render only if client
+            isClient &&
+            <div style={{...styles.sidebar, width: sidebarWidth }}>
+              <MenuSidebar onToggle={toggleSidebar}/>
+            </div>
+          }
           <div style={ styles.page }>
             { children }
           </div>

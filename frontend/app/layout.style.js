@@ -8,7 +8,7 @@ const styles = {
         minHeight: '99vh',
         height: '100%'
     },
-
+    
     page: {
         backgroundColor: COLORS.white,
         overflowX: 'hidden',

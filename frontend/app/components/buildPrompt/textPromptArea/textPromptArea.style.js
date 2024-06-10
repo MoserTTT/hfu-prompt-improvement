@@ -1,31 +1,36 @@
-import COLORS from '../../../../../styles/theme.js'
-import FONTS from '../../../../../styles/fonts.js'
-
-import "./textPromptArea.style.css"
+import COLORS from '../../../../styles/theme.js'
+import FONTS from '../../../../styles/fonts.js'
 
 const styles = {
 
     formattingArea: {
-        backgroundColor: COLORS.white,
-        padding: 5,
+        display: 'flex',
+        flexDirection: 'row',
+        marginTop: '25px',
+        padding: 3,
+        marginRight: '3%',
+        
+        borderStyle: 'solid',
+        borderWidth: '1px',
+        borderColor: COLORS.gray,
+        borderRadius: '5px 5px 0px 0px'
     },
 
     formattingIconBox: {
         border: 'none',
         backgroundColor: 'transparent',
-        display: 'flex',
-        height: 'auto',
-        alignItems: 'center',
-        marginLeft: '15px',
-        padding: 8
+        padding: 8,
+        marginLeft: 2
     },
 
     divider: {
-        marginLeft: '15px'
+        marginLeft: '15px',
+        marginRight: '15px'
     },
     
     inputAreas: {
         display: 'flex',
+        width: '100%'
     },
 
     textArea: {
