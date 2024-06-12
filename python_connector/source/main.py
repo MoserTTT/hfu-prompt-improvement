@@ -1,4 +1,5 @@
 from . import chromaDB_connector
+from . import LLM_connector
 from flask import Flask, request, jsonify
 import os
 import ast
@@ -6,7 +7,8 @@ import ast
 class main:
     
     def __init__(self):
-        self.db = chromaDB_connector.chromaDB_connector(embedding_api_key=os.getenv("EF_API_KEY"))
+        self.db  = chromaDB_connector.chromaDB_connector(embedding_api_key=os.getenv("EF_API_KEY"))
+        self.llm = LLM_connector.AzureOpenAIHandler(api_key=os.getenv("EF_API_KEY"))
         self.app = Flask(__name__)
         self.setup_routes()
     
@@ -84,6 +86,33 @@ class main:
             except Exception as unexpected_error:
                 unexpected_error = repr(unexpected_error)
                 return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
+        
+        @self.app.route("/call_llm", methods=["GET"])
+        def call_llm():
+            data = request.get_json()
+            if not data or "prompt" not in data:
+                return jsonify({"error":"Missing required Parameter"}), 400
+            prompt = data["prompt"]
+            try:
+                prompt_response = self.llm.call_LLM(prompt=prompt)
+                return jsonify(prompt_response), 200
+            except Exception as unexpected_error:
+                unexpected_error = repr(unexpected_error)
+                return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
+        
+        @self.app.route("/prompt_eval", methods=["GET"])    
+        def call_eval_prompt_by_LLM():
+            data = request.get_json()
+            if not data or "prompt_name_and_id" not in data:
+                return jsonify({"error":"Missing required Parameter"}), 400
+            prompt_name_and_id = data["prompt_name_and_id"]
+            try:
+                scores = self.llm.eval_prompt_by_LLM(prompt_name_and_id)
+                return jsonify(scores), 200   
+            except Exception as unexpected_error:
+                unexpected_error = repr(unexpected_error)
+                return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
+        
 
 # The Flask App ("app") must be exposed at Module level
 backend_app = main()            
