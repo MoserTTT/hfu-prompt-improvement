@@ -1,125 +1,53 @@
-import ReactMarkdown from "react-markdown";
-import CodeMirror from '@uiw/react-codemirror'
-import { Divider, Stack } from '@mui/material';
+import * as MDX from '@mdxeditor/editor'
+import '@mdxeditor/editor/style.css'
 
-import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
-import "../../../../assets/icons/components/groups/toolbox";
-
+import styles from "./styles/textPromptArea.style";
 import { useState } from "react";
-
-import styles from "./textPromptArea.style";
-
-import {
-    H1Icon,
-    H2Icon,
-    H3Icon,
-    H4Icon,
-    H5Icon,
-
-    BoldIcon,
-    ItalicIcon,
-    QuoteIcon,
-    StrikeThroughIcon,
-    UnderlineIcon,
-
-    BulletListIcon,
-    NumberListIcon,
-
-    CodeIcon,
-    LinkIcon,
-    PhotoIcon
-} from "../../../../assets/icons/components/groups/toolbox";
-import COLORS from "../../../../styles/theme";
-
-const numberOfIcons = 15;
-
-const textFormattingIcons = [
-    BoldIcon,
-    ItalicIcon,
-    QuoteIcon,
-    StrikeThroughIcon,
-    UnderlineIcon
-];
-
-const listIcons = [
-    BulletListIcon,
-    NumberListIcon
-];
-
-const headerIcons = [
-    H1Icon,
-    H2Icon,
-    H3Icon,
-    H4Icon,
-    H5Icon
-];
-
-const controlsIcons = [
-    CodeIcon,
-    LinkIcon,
-    PhotoIcon
-];
 
 const TextPromptArea = () => {
 
-    const [value, setValue] = useState("");
-
-    function onChange(newValue) {
-        setValue(newValue);
-    }
-    
-    function getWrappedIcon(Component, index) {
-        return (<button 
-                    key={index} 
-                    style={ styles.formattingIconBox } 
-                    className="formattingIcon"
-                >
-                    <Component color={ COLORS.black }/>
-                </button>);
-    }
+    const [value, setValue] = useState("# Hello World");
 
     return (
-        <div>
-            <Stack
-                style={ styles.formattingArea }
-            >
-                {textFormattingIcons.map((Component, index) => (
-                    getWrappedIcon(Component, index)
-                ))}
+        <div style={ styles.markdownArea }>
+            <MDX.MDXEditor
+                markdown={ value }
+                onChange={(val) => setValue(val)}
+                contentEditableClassName="mdEditor"
+                plugins={[
+                    MDX.diffSourcePlugin({ 
+                        diffMarkdown: 'An older version', 
+                        viewMode: 'rich-text',
+                        readOnlyDiff: true 
+                    }),
 
-                <Divider style={ styles.divider } orientation="vertical" flexItem/>
-
-                {headerIcons.map((Component, index) => (
-                    getWrappedIcon(Component, index)
-                ))}
-
-                <Divider style={ styles.divider } orientation="vertical" flexItem/>
-
-                {listIcons.map((Component, index) => (
-                    getWrappedIcon(Component, index)
-                ))}
-
-                <Divider style={ styles.divider } orientation="vertical" flexItem/>
-
-                {controlsIcons.map((Component, index) => (
-                    getWrappedIcon(Component, index)
-                ))}
-            </Stack>
-            <div style={ styles.inputAreas }>
-                <div style={ styles.textArea }>
-                    <CodeMirror
-                        onChange={onChange}
-                        extensions={[
-                            markdown({ base: markdownLanguage })
-                        ]}
-                    />
-                </div>
-                <div style={ styles.previewArea }>
-                    <ReactMarkdown style={ styles.markdownArea}>
-                        { value }
-                    </ReactMarkdown>
-                </div>
-            </div>
+                    MDX.toolbarPlugin({
+                        toolbarContents: () => (
+                            <>
+                            {' '}
+                            <MDX.DiffSourceToggleWrapper>
+                                <MDX.UndoRedo/>
+                                <MDX.Separator/>
+                                <MDX.BoldItalicUnderlineToggles/>
+                                <MDX.Separator/>
+                                <MDX.ListsToggle/>
+                                <MDX.Separator/>
+                                <MDX.BlockTypeSelect/>
+                                <MDX.Separator/>
+                                <MDX.InsertThematicBreak/>
+                                <MDX.CodeToggle/>
+                                <MDX.InsertCodeBlock/>
+                                <MDX.CreateLink/>
+                                <MDX.Separator/>
+                            </MDX.DiffSourceToggleWrapper>
+                            </>
+                        )
+                    }),
+                    MDX.codeBlockPlugin({defaultCodeBlockLanguage: 'js'}),
+                    MDX.codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } }),
+                    MDX.headingsPlugin(), MDX.listsPlugin(), MDX.quotePlugin(), MDX.thematicBreakPlugin(),
+                    MDX.markdownShortcutPlugin()
+                ]} />
         </div>
     );
 }

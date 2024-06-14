@@ -38,14 +38,17 @@ export function Layout({ children }) {
       <body>
         <div style={ styles.root }>
           { // render only if client
-            isClient &&
-            <div style={{...styles.sidebar, width: sidebarWidth }}>
-              <MenuSidebar onToggle={toggleSidebar}/>
-            </div>
+            isClient && (
+              <div style={{ width: '100%', display: 'flex' }}>
+                <div style={{...styles.sidebar, width: sidebarWidth }}>
+                  <MenuSidebar onToggle={toggleSidebar}/>
+                </div>
+                  <div style={ styles.page }>
+                  { children }
+                </div>
+              </div>
+            )
           }
-          <div style={ styles.page }>
-            { children }
-          </div>
           <ScrollRestoration />
           <Scripts />
         </div>

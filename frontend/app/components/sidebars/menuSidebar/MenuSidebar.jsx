@@ -1,3 +1,4 @@
+import React from "react";
 import COLORS from "../../../../styles/theme";
 import { BuildPromptIcon, SettingsIcon } from "../../../../assets/icons/components";
 import { Drawer, ListItemIcon, ListItemText, Typography, List, Divider, ListItemButton } from "@mui/material";
@@ -69,11 +70,17 @@ const MenuSidebar = ({ onToggle }) => {
                 </Typography>
               ) : ""
             }
-          <CollapsableArrow
-            style={styles.collapseArrow}
-            isCollapsed={isCollapsed}
+          <button
+            style={ styles.collapseArrow } 
             onClick={() => onChangeCollapse()}
-            />
+            >
+            <CollapsableArrow
+              rotationLeft="0"
+              rotationRight="180"
+              changeRotation={ isCollapsed }
+              />
+          </button>
+          
         </div>
         <Divider />
         <List

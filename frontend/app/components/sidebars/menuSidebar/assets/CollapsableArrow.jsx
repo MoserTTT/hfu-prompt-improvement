@@ -1,13 +1,19 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "../../../../../assets/icons/components";
+import React, { useState } from "react";
+import { ArrowIcon } from "../../../../../assets/icons/components";
+import COLORS from "../../../../../styles/theme";
 
-const CollapsableArrow = ({ style, isCollapsed, onClick}) =>{
+const CollapsableArrow = ({ rotationLeft, rotationRight, style, changeRotation }) =>{
 
-    const handleClick = () => onClick();
+    const rotation = changeRotation? rotationLeft : rotationRight;
+    
 
     return(
-        <button style={style} onClick={handleClick}>
-            { isCollapsed? <ArrowRightIcon/> : <ArrowLeftIcon/> }
-        </button>
+        <div style={style}>
+            <ArrowIcon
+                style={{ transform: 'rotate(' + rotation + 'deg)' }}
+                color={ COLORS.blue }
+                />
+        </div>
     )
 }
 
