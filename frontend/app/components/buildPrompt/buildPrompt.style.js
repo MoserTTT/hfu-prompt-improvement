@@ -5,8 +5,8 @@ const styles = {
     root: {
         backgroundColor: COLORS.lightGray,
         borderColor: COLORS.gray,
-        width: '100%',
-        padding: '20px 10px 20px 25px '
+        width: '95%',
+        padding: '20px'
     }
 }
 

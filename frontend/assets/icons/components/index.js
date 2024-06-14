@@ -1,11 +1,11 @@
 import SettingsIcon from "./SettingsIcon";
 import BuildPromptIcon from "./BuildPromptIcon";
-import ArrowLeftIcon from "./ArrowLeftIcon";
-import ArrowRightIcon from "./ArrowRightIcon";
+import ArrowIcon from "./ArrowIcon";
+import ClockIcon from "./ClockIcon";
 
 export {
     SettingsIcon,
     BuildPromptIcon,
-    ArrowLeftIcon,
-    ArrowRightIcon
+    ArrowIcon,
+    ClockIcon
 };
