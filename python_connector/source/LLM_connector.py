@@ -89,10 +89,9 @@ score: """
         for metric in self.eval_templates:
             compiled_prompt = self.__create_prompt(template=self.eval_templates[metric], prompt=prompt_to_eval)
             response = self.call_LLM(prompt=compiled_prompt)
-            print(response)
             
             if "advice:" not in response:
-                print("evaluation failed!")
+                print(f"evaluation failed for {metric}!")
                 continue 
             
             response_split = response.split("advice:")
@@ -118,7 +117,11 @@ score: """
             print("Failed to get response. Status code:", response.status_code)
             print("Response:", response.text)
         
-        return scores
+        return_dict = {
+            scores[0] : [scores[1],scores[2]],
+            "id": prompt_name_and_id_split[0] + ":" + str(int(prompt_name_and_id_split[1].strip())+1)
+        }
+        return return_dict
         
 
 # Usage example:
@@ -127,3 +130,4 @@ if __name__ == "__main__":
 
     handler = AzureOpenAIHandler(api_key)
     result = handler.eval_prompt_by_LLM("rest-prompt:1")
+    print(result)
