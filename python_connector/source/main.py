@@ -113,6 +113,22 @@ class main:
                 unexpected_error = repr(unexpected_error)
                 return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
         
+        @self.app.route("/prompt_improve", methods=["GET"])    
+        def call_improve_prompt():
+            data = request.get_json()
+            if not data or "prompt_name_and_id" not in data:
+                return jsonify({"error":"Missing required Parameter"}), 400
+            prompt_name_and_id = data["prompt_name_and_id"]
+            try:
+                improved_prompt= self.llm.improve_prompt(prompt_name_and_id)
+                return jsonify(improved_prompt), 200
+            except ValueError as error:
+                return jsonify({"error": repr(error)}), 500
+            except Exception as unexpected_error:
+                unexpected_error = repr(unexpected_error)
+                return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
+                
+            
 
 # The Flask App ("app") must be exposed at Module level
 backend_app = main()            
