@@ -24,7 +24,19 @@
 
 This document provides an overview of the project structure and the purpose of each file and directory in the React-Remix Vite project. This will help new developers understand the codebase and contribute effectively.
 
-## React basics
+## Installation
+
+1. Local installation (Docker) of Node.js -> https://nodejs.org/en
+2. run "npm install" in terminal for installing dependencies
+
+## Running the Project
+
+1. Run "npm run dev" in terminal
+2. Use localhost adress in browser to access
+
+## Running project tests
+
+1. Run "npm test" in terminal
 
 ### Components
 
