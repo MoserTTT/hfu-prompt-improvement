@@ -2,11 +2,13 @@ import styles from "./buildPrompt.style";
 import NameTagInput from "./nameTagInput/NameTagInput";
 import TextPromptArea from "./textPromptArea/TextPromptArea";
 
+
 const BuildPrompt = () => {
     return (
         <div style={ styles.root }>
             <NameTagInput/>
             <TextPromptArea/>
+            
         </div>
     );
 }

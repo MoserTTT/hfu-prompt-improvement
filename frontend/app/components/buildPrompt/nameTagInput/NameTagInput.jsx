@@ -6,6 +6,8 @@ import { Chip, Stack } from "@mui/material";
 import TextField from '@mui/material/TextField';
 
 import COLORS from "../../../../styles/theme";
+import SaveButton from "../../buttons/SaveButton"
+
 
 const NameTagInput = () => {
 
@@ -55,6 +57,10 @@ const NameTagInput = () => {
                     onClick={ handleAddTag }  >
                     <AddIcon color={addIconColor}/>
                 </button>
+
+                <SaveButton SaveButton name="Save" />
+                <SaveButton SaveButton name="Save as draft" />
+
             </div>
 
             <Stack direction="row" spacing={1}>
