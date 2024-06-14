@@ -1,43 +1,5 @@
 # Running the Backend
 
-## Preparation
-
-### Environment Setup
-
-Ensure the `EF_API_KEY` environment variable is set with your Azure OpenAI key for the Ada 2 deployment.
-
-### Docker Installation
-
-Make sure Docker is installed and running on your system. You can download Docker from [here](https://www.docker.com/products/docker-desktop).
-
-### Correct Directory
-
-Navigate to the `python_connector` directory in your project.
-
-```sh
-cd ./python_connector
-```
-
-## Starting the Backend
-
-To start the backend, use Docker Compose:
-
-```sh
-docker-compose up
-```
-
-## Building and Starting the Python Connector
-
-To build the Python connector and start the services, use the following command:
-
-```sh
-docker-compose up --build
-```
-
-# Using the Backend
-
-You can interact with the backend through its REST API. Here are some simple examples:
-
 ### Creating a Prompt
 
 To create a prompt, use the following URL:
