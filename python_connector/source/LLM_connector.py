@@ -49,10 +49,26 @@ Prompt to be evaluated: {prompt}
 **Evaluation:**
 score: """
             }
+        self.improve_template = """Please improve the following Prompt according to this advice and score, try to keep the key charectaristics of the original prompt. 
+        Please do not further elaborate on what you did, simply give the improved prompt.
+        Please make the Heading of your new prompt: "Improved Prompt".
+        This is the Prompt which you should improve: {prompt}
+        
+        This is the Advice you should consider for the improvement: {scores}"""
         
     def __create_prompt(self, template, **kwargs):
         return template.format(**kwargs)
-
+    
+    def __request_prompt(self, prompt_name_and_id):
+        prompt_name_and_id_split = prompt_name_and_id.split(":") 
+        filter_param = {"$and": [{"name": prompt_name_and_id_split[0]}, {"version": int(prompt_name_and_id_split[1])}]}
+        params = {"filter": json.dumps(filter_param)}
+        response = requests.get(self.prompt_by_metadata_url, params=params)
+        if response.status_code == 200:
+            print("Response:", response.json())
+        else:
+            print("Failed to get response. Status code:", response.status_code)
+        return response
 
     def call_LLM(self, prompt: str, system_prompt:str = None) -> str:
         messages = []
@@ -69,19 +85,7 @@ score: """
         return response.choices[0].message.content
     
     def eval_prompt_by_LLM(self, prompt_name_and_id:str):
-        prompt_name_and_id_split = prompt_name_and_id.split(":")
-        
-        filter_param = {"$and": [{"name": prompt_name_and_id_split[0]}, {"version": int(prompt_name_and_id_split[1])}]}
-
-        params = {"filter": json.dumps(filter_param)}
-        
-        response = requests.get(self.prompt_by_metadata_url, params=params)
-
-        if response.status_code == 200:
-            print("Response:", response.json())
-        else:
-            print("Failed to get response. Status code:", response.status_code)
-        
+        response = self.__request_prompt(prompt_name_and_id)
         prompt_to_eval = json.loads(response.text)["documents"][0]
         previous_metadata = json.loads(response.text)["metadatas"][0]
         
@@ -117,11 +121,23 @@ score: """
             print("Failed to get response. Status code:", response.status_code)
             print("Response:", response.text)
         
+        prompt_name_and_id_split = prompt_name_and_id.split(":")
         return_dict = {
             scores[0] : [scores[1],scores[2]],
             "id": prompt_name_and_id_split[0] + ":" + str(int(prompt_name_and_id_split[1].strip())+1)
         }
         return return_dict
+    
+    def improve_prompt(self, prompt_name_and_id:str):
+        response = self.__request_prompt(prompt_name_and_id)
+        user_prompt = json.loads(response.text)["documents"][0]
+        user_metadata = json.loads(response.text)["metadatas"][0]
+        if "ratings" not in user_metadata:
+            raise ValueError("Prompt has no ratings")
+        ratings = user_metadata["ratings"][2]
+        improve_prompt = self.__create_prompt(self.improve_template,prompt=user_prompt, scores=ratings)
+        improved_response = self.call_LLM(prompt=improve_prompt)       
+        return improved_response
         
 
 # Usage example:
