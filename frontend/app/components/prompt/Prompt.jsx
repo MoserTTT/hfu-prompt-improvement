@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./prompt.style";
 import { Chip } from "@mui/material";
 import { ClockIcon } from "../../../assets/icons/components";
@@ -42,9 +42,9 @@ const Prompt = ({ name, dateCreated, status, tags, author, content }) => {
                     <p style={styles.viewMoreText}>View more </p>
                     <CollapsableArrow
                         style={styles.collapsableArrow}
-                        rotationLeft="90"
-                        rotationRight="0"
-                        changeRotation={isCollapsed}
+                        rotationleft="90"
+                        rotationright="0"
+                        changerotation={isCollapsed}
                     />
                 </button>
             </div>
