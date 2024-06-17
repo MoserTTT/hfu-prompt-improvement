@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./prompt.style";
 import { Chip } from "@mui/material";
 import { ClockIcon } from "../../../assets/icons/components";
@@ -20,7 +20,9 @@ const Prompt = ({ name, dateCreated, status, tags, author, content }) => {
     const style = {
         transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
         ...styles.outerDiv,
-        cursor: 'grab'
+        cursor: 'grab',
+        position: 'relative',
+        zIndex: 1
     };
 
     function onChangeCollapse() {

@@ -6,7 +6,7 @@ const styles = {
         backgroundColor: COLORS.lightGray,
         borderColor: COLORS.gray,
         width: '95%',
-        padding: '20px'
+        padding: '20px',
     }
 }
 

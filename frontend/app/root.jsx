@@ -40,10 +40,10 @@ export function Layout({ children }) {
           { // render only if client
             isClient && (
               <div style={{ width: '100%', display: 'flex' }}>
-                <div style={{...styles.sidebar, width: sidebarWidth }}>
+                <div style={{ width: sidebarWidth }}>
                   <MenuSidebar onToggle={toggleSidebar}/>
                 </div>
-                  <div style={ styles.page }>
+                <div style={ styles.page }>
                   { children }
                 </div>
               </div>

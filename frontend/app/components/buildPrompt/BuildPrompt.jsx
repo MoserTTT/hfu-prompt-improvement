@@ -5,9 +5,9 @@ import TextPromptArea from "./textPromptArea/TextPromptArea";
 
 const BuildPrompt = () => {
   return (
-    <div style={styles.root}>
-      <NameTagInput />
-      <TextPromptArea />
+    <div style={ styles.root }>
+      <NameTagInput/>
+      <TextPromptArea/>
     </div>
   );
 };
