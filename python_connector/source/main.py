@@ -1,6 +1,7 @@
 from . import chromaDB_connector
 from . import LLM_connector
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import ast
 
@@ -11,6 +12,7 @@ class main:
         self.llm = LLM_connector.AzureOpenAIHandler(api_key=os.getenv("EF_API_KEY"))
         self.app = Flask(__name__)
         self.setup_routes()
+        CORS(self.app)  # This will enable CORS for all routes
     
     def setup_routes(self):
         @self.app.route("/")
