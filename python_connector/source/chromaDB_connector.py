@@ -34,7 +34,7 @@ class chromaDB_connector:
         )
 
         # getting the client
-        self.__client = chromadb.HttpClient(host='chroma', port=8000)
+        self.__client = chromadb.HttpClient(host='chroma', port=8000)  
 
         # getting or creating the collection
         self.__prompt_collection = self.__client.get_or_create_collection(
@@ -160,13 +160,13 @@ class chromaDB_connector:
                         f"The {key} can only contain letters, numbers, - ,' and whitespaces.")
 
         # Function that validates lists
-        def validate_list(key, value, type=str, required=False, min_length=2, max_length=50, printable=False):
+        def validate_list(key, value, type=str, required=False, min_length=2, max_length=50, has_to_pass_regex=False):
             if key in metadata:
                 if not isinstance(value, list):
                     raise ValueError(f"The {key} has to be of type list!")
                 for element in value:
                     validate_field(key=key, value=element, type=type, required=required,
-                                   min_length=min_length, max_length=max_length, has_to_pass_regex=printable)
+                                   min_length=min_length, max_length=max_length, has_to_pass_regex=has_to_pass_regex)
 
         # check if there are any invalid keys in metadata
         if len([key for key in metadata if key not in self.allowed_metadata_keys]) > 0:
@@ -183,7 +183,7 @@ class chromaDB_connector:
         validate_list("models", metadata.get("models"))
         validate_list("tags", metadata.get("tags"))
         validate_list("languages", metadata.get("languages"))
-        #validate_list("ratings", metadata.get("ratings"))  # TODO: add further validation
+        validate_list("ratings", metadata.get("ratings"), min_length=1, max_length=250)  
         validate_list("comments", metadata.get("comments"),
                       max_length=500)
 
@@ -286,3 +286,4 @@ class chromaDB_connector:
                 version = prompt_metadata["version"] + 1
 
         return version
+
