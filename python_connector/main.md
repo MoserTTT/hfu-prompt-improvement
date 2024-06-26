@@ -63,3 +63,32 @@ A GET route that retrieves prompts based on a vector query.
     - `200 OK` with the result in JSON format
     - `400 Bad Request` if the required parameters are missing
     - `500 Internal Server Error` if there is an unexpected error
+
+
+#### ``call_llm()``
+A GET route that interacts with a Language Model (LLM) to generate a response to a given prompt.
+- **Body**
+  - `prompt` (string, required): The prompt string for the Language Model.
+- **Responses**
+  - `200 OK` with the generated response in JSON format.
+  - `400 Bad Request` if the required `prompt` parameter is missing in the request.
+  - `500 Internal Server Error` if there is an unexpected error during processing.
+
+#### ``call_eval_prompt_by_LLM()``
+A GET route that evaluates a prompt using a Language Model (LLM) and returns scores.
+- **Body**
+  - `prompt_name_and_id` (string, required): Identifier for the prompt to evaluate. (e.g. "test-prompt:1")
+- **Responses**
+  - `200 OK` with the evaluation scores in JSON format.
+  - `400 Bad Request` if the required `prompt_name_and_id` is missing in the request.
+  - `500 Internal Server Error` if there is an unexpected error during evaluation.
+
+#### ``call_improve_prompt()``
+A GET route that attempts to improve a prompt using a Language Model (LLM).
+- **Body**
+  - `prompt_name_and_id` (string, required): Identifier for the prompt to improve. (e.g. "test-prompt:1")
+- **Responses**
+  - `200 OK` with the improved prompt in JSON format.
+  - `500 Internal Server Error` if a `ValueError` occurs during the improvement process, returning details of the error in JSON format.
+  - `500 Internal Server Error` if there is an unexpected error during processing.
+
