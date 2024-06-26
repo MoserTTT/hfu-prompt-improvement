@@ -3,7 +3,6 @@ import chromadb
 import re
 from datetime import datetime
 
-
 class chromaDB_connector:
     """
     Connects to the ChromaDB database and provides methods to interact with prompts.
@@ -183,7 +182,7 @@ class chromaDB_connector:
         validate_list("models", metadata.get("models"))
         validate_list("tags", metadata.get("tags"))
         validate_list("languages", metadata.get("languages"))
-        validate_list("ratings", metadata.get("ratings"), min_length=1, max_length=250)  
+        validate_list("ratings", metadata.get("ratings"), min_length=1, max_length=500)  
         validate_list("comments", metadata.get("comments"),
                       max_length=500)
 

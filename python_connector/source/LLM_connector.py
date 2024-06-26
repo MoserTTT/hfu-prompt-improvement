@@ -1,9 +1,15 @@
-import os
 from openai import AzureOpenAI
 import requests
 import json
+import logging
+import re
+
+# Configure the logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # TODO
+# remove token limit
 # seperater container?
 
 
@@ -34,11 +40,11 @@ class AzureOpenAIHandler:
             azure_endpoint=endpoint
         )
         self.deployment_name = deployment_name
-        self.prompt_by_metadata_url = "http://python-connector:5000/prompt_by_metadata"
-        self.create_prompt_url = "http://python-connector:5000/set_prompt"
+        self.prompt_by_metadata_url = "http://localhost:5000/prompt_by_metadata"
+        self.create_prompt_url = "http://localhost:5000/set_prompt"
         self.eval_templates = {
-            "structure": """
-Your task is to evaluate the structure of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
+            "structure":
+            """Your task is to evaluate the structure of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
 
 - **0:** The prompt is completely unclear, lacks coherence, and provides no useful guidance.
 - **1:** The prompt is mostly unclear and confusing, with very little useful guidance.
@@ -55,7 +61,59 @@ Prompt to be evaluated: "Describe the main character in a novel, including their
 
 **Evaluation:**
 score: 5
-advice: This prompt is very clear and provides precise and useful guidance. It specifies what aspects of the main character to describe and encourages the inclusion of specific details and examples.
+advice: This is an excellent prompt. To make it even better, you might consider encouraging students to use descriptive language and to think about how the character's traits influence the story. For example, "Describe the main character in a novel, including their physical appearance, personality traits, and background. Use vivid descriptions and specific examples. Consider how these traits affect the character's actions and interactions within the story."
+---
+
+**Please follow the criteria above to evaluate the prompt provided.**
+Prompt to be evaluated: {prompt}
+
+**Evaluation:**
+score: """,
+            "clarity":
+            """Your task is to evaluate the clarity of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
+
+- **0:** The prompt is completely unclear, highly ambiguous, and lacks any specific details.
+- **1:** The prompt is mostly unclear and ambiguous, providing very little specific guidance.
+- **2:** The prompt has significant issues with clarity and contains ambiguous language, offering minimal specific guidance.
+- **3:** The prompt is somewhat clear but has notable issues with ambiguity and lack of specific details.
+- **4:** The prompt is mostly clear with minor ambiguities and provides specific guidance with slight issues.
+- **5:** The prompt is very clear, unambiguous, and provides precise and specific details for guidance.
+
+---
+
+**Example of Evaluation:**
+
+Prompt to be evaluated: "Describe the steps to make a sandwich."
+
+**Evaluation:**
+score: 2
+advice: This prompt is clear but could be more detailed. Specify the character's role and story context to guide responses better. Example: 'Describe the protagonist in your favorite novel, detailing their physical appearance, personality traits, and background, including key events that shaped them.'
+
+---
+
+**Please follow the criteria above to evaluate the prompt provided.**
+Prompt to be evaluated: {prompt}
+
+**Evaluation:**
+score: """,
+            "completeness":
+            """Your task is to evaluate the completeness of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
+
+- **0:** The prompt is completely incomplete, lacks necessary background information, scope, and clarity.
+- **1:** The prompt is mostly incomplete, with very little background information or scope covered.
+- **2:** The prompt has significant gaps in background information and scope, providing minimal guidance.
+- **3:** The prompt is somewhat complete but still has notable gaps that affect its comprehensiveness.
+- **4:** The prompt is mostly complete, with minor gaps that slightly impact its comprehensiveness.
+- **5:** The prompt is very complete, providing thorough background information, scope, and guidance without any gaps.
+
+---
+
+**Example of Evaluation:**
+Prompt to be evaluated: "Describe the main character in a novel, including their physical appearance, personality traits, and background. Make sure to include specific details and examples."
+
+**Evaluation:**
+score: 3
+advice: This prompt is somewhat complete but could benefit from more specific guidance. Clarify the type of novel or the character's role to provide better direction. For example: "Describe the protagonist in a mystery novel, detailing their physical appearance, personality traits, and background, including key events that shaped them and how these influence their actions in the story."
 
 ---
 
@@ -65,12 +123,17 @@ Prompt to be evaluated: {prompt}
 **Evaluation:**
 score: """
         }
-        self.improve_template = """Please improve the following Prompt according to this advice and score, try to keep the key charectaristics of the original prompt. 
-        Please do not further elaborate on what you did, simply give the improved prompt.
-        Please make the Heading of your new prompt: "Improved Prompt".
-        This is the Prompt which you should improve: {prompt}
+        self.improve_template = """Please improve the following prompt according to the given advice if applicable while maintaining the key characteristics of the original prompt. Provide the improved prompt without further elaboration.
         
-        This is the Advice you should consider for the improvement: {scores}"""
+Use placeholders like <placeholder> if you want to add details that the user should fill in.
+
+Original Prompt:
+{prompt}
+
+Advice for Improvement:
+{scores}
+
+Improved prompt: """
 
     def __compile_prompt(self, template: str, **kwargs):
         """
@@ -105,19 +168,19 @@ score: """
 
         # Response handling
         if response.status_code == 200:
-            print("Response:", response.json())
+            logger.info("Response:", response.json())
         else:
-            print("Failed to get response. Status code:", response.status_code)
+            logger.error("Failed to get response. Status code:", response.status_code)
         return response
 
-    def call_LLM(self, prompt: str, system_prompt: str = None, max_tokens: int = 250) -> str:
+    def call_LLM(self, prompt: str, system_prompt: str = None, max_tokens: int = 500) -> str:
         """
         Calls the LLM to generate a response based on the provided prompt.
 
         Args:
             prompt (str): The user prompt to be sent to the LLM.
             system_prompt (str, optional): An optional system prompt for context.
-            max_tokens (int, optional): The limit of output tokens. Defaults to 250.
+            max_tokens (int, optional): The limit of output tokens. Defaults to 500.
 
         Returns:
             str: The LLM response.
@@ -155,7 +218,7 @@ score: """
         previous_metadata = json.loads(response.text)["metadatas"][0]
 
         # Loop through each scoring prompt and collect them in scores
-        scores = [] # ["metric1","score1","advice1","metric2", ...]
+        scores = []  # ["metric1","score1","advice1","metric2", ...]
         for metric in self.eval_templates:
             # Compile the eval prompt and run it
             compiled_prompt = self.__compile_prompt(
@@ -164,14 +227,14 @@ score: """
 
             # Check if syntax of the response is correct
             if "advice:" not in response:
-                print(f"evaluation failed for {metric}!")
+                logger.error(f"evaluation failed for {metric}! Got {response}")
                 continue
 
             # Add the results to scores
-            response_split = response.split("advice:")
+            response_split = re.split(r'[aA]dvice:', response)
             scores.append(metric)   # metric name
             scores.append(response_split[0].strip())    # score
-            scores.append(response_split[1].strip()[:249])  # advice
+            scores.append(response_split[1].strip()[:499])  # advice
 
         # set the ratings in previous metadata
         previous_metadata["ratings"] = scores
@@ -189,17 +252,16 @@ score: """
 
         # Response handling
         if response.status_code == 200:
-            print("Response:", response.json())
+            logger.info("Response:", response.json())
         else:
-            print("Failed to get response. Status code:", response.status_code)
-            print("Response:", response.text)
+            logger.error("Failed to get response. Status code:", response.status_code)
+            logger.error("Response:", response.text)
 
         # Return the new name and id and the scores
         prompt_name_and_id_split = prompt_name_and_id.split(":")
-        return_dict = {
-            scores[0]: [scores[1], scores[2]],
-            "id": prompt_name_and_id_split[0] + ":" + str(int(prompt_name_and_id_split[1].strip())+1)
-        }
+        return_dict = {"id": prompt_name_and_id_split[0] + ":" + str(int(prompt_name_and_id_split[1].strip())+1)}
+        for i in range(int(len(scores)/3)):
+            return_dict[scores[i*3]] = [scores[1 + i*3], scores[2 + i*3]],
         return return_dict
 
     def improve_prompt(self, prompt_name_and_id: str):
@@ -214,18 +276,27 @@ score: """
         """
         # Get the prompt and metadata
         response = self.__request_prompt(prompt_name_and_id)
-        user_prompt = json.loads(response.text)["documents"][0]
+        prompt = json.loads(response.text)["documents"][0]
         user_metadata = json.loads(response.text)["metadatas"][0]
-        
-        # Check if ratings exist 
+
+        # Check if ratings exist
         if "ratings" not in user_metadata:
-            self.eval_prompt_by_LLM(prompt_name_and_id = prompt_name_and_id)
-            
-        # Compile the improvement Prompt with the ratings
-        ratings = user_metadata["ratings"][2]
+            self.eval_prompt_by_LLM(prompt_name_and_id=prompt_name_and_id)
+
+        ratings = user_metadata["ratings"]
+        scores = ""
+        logger.info(f"ratings = {ratings}")
+        # slice starts at index 1: until end: in steps of size 2 (so all scores)
+        for i, metric in enumerate(ratings[0::3]):
+            if ratings[1+ i*3].strip() != "5":
+                scores += f"**{metric}**:\n{ratings[2+ i*3]}\n\n"
+                
+        logger.info(scores)
+        
         improve_prompt = self.__compile_prompt(
-            self.improve_template, prompt=user_prompt, scores=ratings)
+            self.improve_template, prompt=prompt, scores=scores)   # el[2+ i*3] is the advice for the score
+        
+        response = self.call_LLM(prompt=improve_prompt, max_tokens=4000)
         
         # Return LLM response
-        improved_response = self.call_LLM(prompt=improve_prompt)
-        return improved_response
+        return response
