@@ -1,6 +1,7 @@
 import chromadb.utils.embedding_functions as embedding_functions
 import chromadb
 import re
+import time
 from datetime import datetime
 
 class chromaDB_connector:
@@ -31,18 +32,55 @@ class chromaDB_connector:
             api_version="2023-05-15",
             model_name=embedding_model_name
         )
-
-        # getting the client
-        self.__client = chromadb.HttpClient(host='chroma', port=8000)  
-
-        # getting or creating the collection
-        self.__prompt_collection = self.__client.get_or_create_collection(
-            embedding_function=self.__openai_ef, name="prompts")
-
         # defining the allowed metadata keys for metadata validation
         self.allowed_metadata_keys = [
             "name", "description", "author", "models", "tags", "languages", "ratings", "comments"]
 
+        self.__last_failure_time = None
+        self.__cooldown = 20
+        # getting the client
+        try:
+           self.__get_client()
+        except ConnectionError as e:
+            print(e)
+            
+
+    def __get_client(self):
+        """
+        Gets the client and creates or gets the collection.
+
+        This step might have to be redone depending on chroma service availability
+        """
+        try:
+            self.__client = chromadb.HttpClient(host='localhost', port=5555)  
+                # getting or creating the collection
+            self.__prompt_collection = self.__client.get_or_create_collection(
+                embedding_function=self.__openai_ef, name="prompts")
+            
+        except Exception as e:
+            self.__client = None
+            self.__last_failure_time = time.time()
+            raise ConnectionError("Could not connect to Chroma Service. Further Info: " + repr(e))
+        
+    def __is_client_reachable(self):
+        if self.__client is None:
+            return False
+        try:
+            self.__client.heartbeat()
+            return True
+        except:
+            return False
+        
+    
+    def __ensure_client_available(self):
+        if not self.__is_client_reachable():
+            if self.__last_failure_time and time.time() - self.__last_failure_time > self.__cooldown:
+                self.__get_client()
+            else:
+                remaining_cooldown = self.__cooldown - (time.time() - self.__last_failure_time)
+                raise ConnectionError("Did not attempt to connect to client: remaining Cooldown: " + repr(remaining_cooldown))
+                
+        
     def create_prompt(self, prompt: str, metadata: dict):
         """
         Saves a prompt to the database.
@@ -51,7 +89,7 @@ class chromaDB_connector:
             prompt (str): The prompt text to be saved.
             metadata (dict): Metadata associated with the prompt.
         """
-
+        self.__ensure_client_available()
         # validate the metadata
         self.__validate_metadata(metadata=metadata)
 
@@ -84,7 +122,7 @@ class chromaDB_connector:
         Returns:
             dict: Query results.
         """
-
+        self.__ensure_client_available()
         # query prompts by vector
         query_result = self.__prompt_collection.query(
             query_texts=[query],
@@ -115,7 +153,7 @@ class chromaDB_connector:
         Returns:
             dict: Query results.
         """
-
+        self.__ensure_client_available()
         # get all prompts that follow the set filter
         query_result = self.__prompt_collection.get(
             limit=top_n,
