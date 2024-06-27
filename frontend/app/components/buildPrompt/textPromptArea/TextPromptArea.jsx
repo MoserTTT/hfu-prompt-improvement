@@ -4,6 +4,7 @@ import '@mdxeditor/editor/style.css';
 import { useDroppable } from '@dnd-kit/core';
 import styles from "./styles/textPromptArea.style";
 import useStore from "../utils/markdownContentStore";
+import jsxComponentDescriptors from "./integratedPrompt/IntegratedPrompt";
 
 const TextPromptArea = () => {
   // Hook to set the droppable area
@@ -49,7 +50,7 @@ const TextPromptArea = () => {
   }, [contentAddedByDnD, setDnD]);
 
   return (
-    <div ref={setNodeRef} style={styles.markdownArea}>
+    <div ref={setNodeRef} style={ styles.markdownArea }>
       <MDX.MDXEditor
         key={contentAddedByDnD ? markdownContent : undefined}
         ref={contentEditableRef}
@@ -57,10 +58,11 @@ const TextPromptArea = () => {
         onChange={val => setMarkdownContent(val, false)}
         contentEditableClassName="mdEditor"
         plugins={[
+          MDX.jsxPlugin({ jsxComponentDescriptors }), // Include the plugin and descriptor
           MDX.diffSourcePlugin({
             diffMarkdown: 'An older version',
             viewMode: 'rich-text',
-            readOnlyDiff: true
+            readOnlyDiff: true,
           }),
           MDX.toolbarPlugin({
             toolbarContents: () => (

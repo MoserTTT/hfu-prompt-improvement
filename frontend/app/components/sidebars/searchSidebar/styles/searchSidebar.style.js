@@ -20,9 +20,13 @@ const styles = {
         margin: '20px'
     },
 
+    list: {
+        overflowY: 'auto'
+    },
+
     filterButton: {
         background: "none",
-        //border: 0,
+        border: 0,
         //color: "black",
         display: "flex",
         justifyContent: "center",

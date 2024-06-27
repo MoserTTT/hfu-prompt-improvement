@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 // Create a store using Zustand
 const useStore = create((set) => ({

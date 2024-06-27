@@ -4,7 +4,7 @@ import styles from "./styles/searchSidebar.style";
 import FilterIcon from "../../../../assets/icons/components/FilterIcon";
 import COLORS from "../../../../styles/theme";
 import { useState } from "react";
-
+import { DragOverlay } from "@dnd-kit/core";
 
 const SearchSidebar = ({ onToggle }) => {
 
@@ -43,33 +43,27 @@ const SearchSidebar = ({ onToggle }) => {
                     >
                     <FilterIcon color={iconColor}/>       
                 </button>
-
                 </div>
-                
 
-
-                <List>
-                    <div style={ styles.prompt } >
+                <List style={ styles.list }>
+                    <div style={ styles.prompt }>
                         <Prompt
-                            name="Lorem Ipsum Prompt"
+                            name="Prompt 1"
                             dateCreated="29. July 2004"
                             status="Active"
-                            tags="listOfTags"
-                            author="Mustermann"
-                            content="Simple Prompt example"
-                        />
-                    </div>
-                    <div style={ styles.prompt } >
-                        <Prompt
-                            name="Lorem Ipsum Prompt"
-                            dateCreated="29. July 2004"
-                            status="Active"
-                            tags="listOfTags"
-                            author="Mustermann"
-                            content="Simple Prompt example"
+                            tags={["tag1", "tag2", "tag3"]}
+                            author="David Pospisil"
+                            content="content"
                         />
                     </div>
                 </List>
+                <DragOverlay>
+                    <Prompt
+                        name="Prompt Name"
+                        dateCreated="DD. Month Year"
+                        status="Status"
+                    />
+                </DragOverlay>
             </Drawer>
         </div>
     );
