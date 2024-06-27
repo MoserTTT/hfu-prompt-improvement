@@ -1,6 +1,8 @@
 //import COLORS from '../../../../styles/theme.js'
 //import FONTS from '../../../../styles/fonts.js'
 
+import COLORS from "../../../styles/theme";
+
 const styles = {
     backgroundColor: '#007BFF', // Blau
     color: 'white',
@@ -14,7 +16,7 @@ const styles = {
     marginRight: '15px',
     marginTop: '15px',
  
-    backgroundColorHover: '#0056b3', // Dunkleres Blau beim Hover
+    backgroundColorHover: COLORS.darkBlue, // Dunkleres Blau beim Hover
   };
 
   export default styles;
