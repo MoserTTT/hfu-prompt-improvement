@@ -32,6 +32,7 @@ const Prompt = ({ name, dateCreated, status, tags, author, content }) => {
 
     return (
         <div ref={setNodeRef} style={style}>
+
             <div style={styles.innerDiv} {...attributes} {...listeners}>
 
                 <div style={styles.headingDiv}>

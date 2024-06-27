@@ -11,35 +11,38 @@ const styles = {
     },
 
     searchField: {
-        margin: '30px 300px 20px 25px',
+        margin: '30px 25px 20px 25px',
         backgroundColor: COLORS.white,
-        //width: "100%",
+        width: "30vw"
     },
-
-    prompt: {
-        margin: '20px'
-    },
-
+    
     list: {
-        overflowY: 'auto'
+        overflowY: 'auto',
+        justifyContent: 'center',
+        width: 'fit-content',
+        backgroundColor: COLORS.lightGray,
+        marginLeft: '25px',
+        borderRadius: '15px'
+    },
+    
+    prompt: {
+        width: 'fit-content',
+        margin: '20px 20px 40px 20px'
     },
 
     filterButton: {
         background: "none",
         border: 0,
-        //color: "black",
-        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        flex: 1,
         width: "fit-content",
-        margin: '30px 25px 20px 0px',
-        
+        margin: '30px 20px 20px 0px',
     },
 
-    divStlye:{
+    divStyle:{
         display: "flex",
-        alignItems: "center",
+        justifyContent: 'space-between',
+        alignItems: "center"
     }
 };
 

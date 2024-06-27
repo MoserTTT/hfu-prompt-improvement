@@ -7,8 +7,7 @@ const styles = {
 
     markdownArea: {
         borderColor: COLORS.gray,
-        marginTop: '40px',
-        marginRight: '200px'
+        marginTop: '40px'
     },
 }
 
