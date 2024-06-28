@@ -26,6 +26,42 @@ const NameTagInput = () => {
     }
   };
 
+  const createPrompt = async () => {
+    const url = 'http://127.0.0.1:5000/set_prompt';
+    const requestBody = {
+      prompt: markdownContent,
+      metadata: {
+        name: document.getElementById("nameInput").value,
+        author: 'Author',
+        description: 'Description',
+        tags: tags
+       }
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create prompt');
+      }
+  
+      const responseData = await response.json();
+      console.log('Prompt created:', responseData);
+    } catch (error) {
+      console.error('Error creating prompt:', error);
+    }
+  };
+
+  const createPromptDraft = () => {
+
+  }
+
   return (
     <div>
       <div style={styles.upperSection}>
@@ -53,8 +89,8 @@ const NameTagInput = () => {
         >
           <AddIcon color={addIconColor} />
         </button>
-        <SaveButton name="Save" />
-        <SaveButton name="Save as draft" />
+        <SaveButton name="Save" onClick={createPrompt} />
+        <SaveButton name="Save as draft" onClick={createPromptDraft} />
       </div>
       <Stack direction="row" spacing={1}>
         {tags.map((tag, index) => (
