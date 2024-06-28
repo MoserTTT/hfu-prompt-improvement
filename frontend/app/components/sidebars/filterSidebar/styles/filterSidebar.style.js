@@ -1,10 +1,83 @@
-import FONTS from "../../../../../styles/fonts";
-import COLORS from "../../../../../styles/theme";
+// filterSidebar.style.js
+
+import FONTS from "../../../../../styles/fonts"; // Import fonts
+import COLORS from "../../../../../styles/theme"; // Import theme colors
+import "./filterSidebar.style.css"; // Import the CSS file for additional styles
 
 const styles = {
+    root: {
+        backgroundColor: '#fff', // White background color
+        overflowX: 'auto', // Horizontal overflow handling
+        overflowY: 'auto', // Vertical overflow handling
+    },
+
+    navHeader: {
+        display: 'flex', // Flexbox container
+        justifyContent: 'space-between', // Space evenly between items
+        alignItems: 'center', // Centered vertically
+        padding: '10px 20px', // Padding
+        borderBottom: '1px solid #ddd', // Bottom border
+    },
+
+    collapseArrow: {
+        background: 'none', // Transparent background
+        border: 'none', // No border
+        cursor: 'pointer', // Pointer cursor
+    },
+
+    formControl: {
+        margin: '10px 20px', // Margin
+        minWidth: '120px', // Minimum width
+        width: 'calc(100% - 40px)', // Full width minus margins
+    },
+
+    select: {
+        width: '100%', // Full width
+    },
+
+    formControlFocused: {
+        border: '1px solid #ccc', // Border color on focus
+    },
+
+    inputLabel: {
+        background: '#fff', // White background
+        padding: '0 5px', // Padding
+    },
+
+    searchField: {
+        margin: '30px 25px 20px 25px', // Margin
+        backgroundColor: COLORS.white || '#fff', // Background color from theme or fallback to white
+        width: '30vw', // Width based on viewport width
+    },
+
+    list: {
+        overflowY: 'auto', // Vertical overflow handling
+        justifyContent: 'center', // Centered content
+        width: 'fit-content', // Width based on content
+        backgroundColor: COLORS.lightGray || '#f0f0f0', // Background color from theme or fallback to light gray
+        marginLeft: '25px', // Left margin
+        borderRadius: '15px', // Rounded corners
+    },
+
+    prompt: {
+        width: 'fit-content', // Width based on content
+        margin: '20px 20px 40px 20px', // Margin
+    },
+
     filterButton: {
-        //
-    }
+        background: 'none', // Transparent background
+        border: 'none', // No border
+        justifyContent: 'center', // Centered content
+        alignItems: 'center', // Centered items
+        width: 'fit-content', // Width based on content
+        margin: '30px 20px 20px 0', // Margin
+    },
+
+    divStyle: {
+        display: 'flex', // Flexbox container
+        justifyContent: 'space-between', // Space evenly between items
+        alignItems: 'center', // Centered items vertically
+    },
 };
 
-export default styles ;
+export default styles;
