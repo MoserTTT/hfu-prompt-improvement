@@ -4,6 +4,7 @@ import ArrowIcon from "./ArrowIcon";
 import ClockIcon from "./ClockIcon";
 import UserIcon from "./UserIcon";
 import SearchIcon from "./SearchIcon";
+import MagicIcon from "./MagicIcon";
 
 export {
     SettingsIcon,
@@ -11,5 +12,6 @@ export {
     ArrowIcon,
     ClockIcon,
     UserIcon,
-    SearchIcon
+    SearchIcon,
+    MagicIcon
 };
