@@ -4,11 +4,15 @@ import styles from "./styles/nameTagInput.style";
 import { Chip, Stack, TextField } from "@mui/material";
 import COLORS from "../../../../styles/theme";
 import SaveButton from "../../buttons/SaveButton";
+import transformMarkdownContent from "./assets/transformMarkdownContent";
+import useStore from "../utils/markdownContentStore";
 
 const NameTagInput = () => {
   const [addIconColor, setAddIconColor] = useState(COLORS.gray);
   const [tags, setTags] = useState([]);
   const tagInputRef = useRef(null);
+
+  const markdownContent = useStore(state => state.markdownContent);
 
   const handleHover = (event) => {
     setAddIconColor(event.type === "mouseenter" ? COLORS.blue : COLORS.gray);
@@ -22,14 +26,17 @@ const NameTagInput = () => {
     const newTag = tagInputRef.current.value;
     if (newTag && !tags.includes(newTag)) {
       setTags([...tags, newTag]);
-      tagInputRef.current.value = "";
+      tagInputRef.current.value = null;
     }
   };
 
   const createPrompt = async () => {
+
+    const content = transformMarkdownContent(markdownContent);
     const url = 'http://127.0.0.1:5000/set_prompt';
+
     const requestBody = {
-      prompt: markdownContent,
+      prompt: content,
       metadata: {
         name: document.getElementById("nameInput").value,
         author: 'Author',

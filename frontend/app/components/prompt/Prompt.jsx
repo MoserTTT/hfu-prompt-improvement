@@ -65,7 +65,7 @@ const Prompt = ({ name, dateCreated, status, tags, author, content }) => {
                 {isCollapsed && (
                     <>
                         <Divider orientation="horizontal" />
-                        {tags.length > 0 && (
+                        {tags && tags.length > 0 && (
                             <div>
                                 {tags.map((tag) =>
                                     <Chip style={styles.tag} key={tag} label={tag} />
