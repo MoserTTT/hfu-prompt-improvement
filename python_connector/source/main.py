@@ -45,10 +45,10 @@ class main:
                 return jsonify({"error":"Missing required Parameter"}), 400
             filter = ast.literal_eval(filter)
             params["filter"] = filter           
-            if top_n is str:    # Otherwise None 
+            if type(top_n) is str:    # Otherwise None 
                 top_n = ast.literal_eval(top_n)
                 params["top_n"] = top_n
-            if compile is str:
+            if type(compile) is str:
                 compile = ast.literal_eval(compile)      
                 params["compile"] = compile
             try:
@@ -71,13 +71,13 @@ class main:
             if query is None:
                 return jsonify({"error":"Missing required Parameter"}), 400
             params["query"] = query
-            if filter is str:   # Otherwise None 
+            if type(filter) is str:   # Otherwise None 
                 filter = ast.literal_eval(filter)      
                 params["filter"] = filter
-            if top_n is str:    
+            if type(top_n) is str:    
                 top_n = ast.literal_eval(top_n)
                 params["top_n"] = top_n
-            if compile is str:
+            if type(compile) is str:
                 compile = ast.literal_eval(compile)      
                 params["compile"] = compile
             try:
