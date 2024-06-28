@@ -52,7 +52,7 @@ class chromaDB_connector:
         This step might have to be redone depending on chroma service availability
         """
         try:
-            self.__client = chromadb.HttpClient(host='localhost', port=5555)  
+            self.__client = chromadb.HttpClient(host='chroma', port=8000)  
                 # getting or creating the collection
             self.__prompt_collection = self.__client.get_or_create_collection(
                 embedding_function=self.__openai_ef, name="prompts")
@@ -77,8 +77,7 @@ class chromaDB_connector:
             if self.__last_failure_time and time.time() - self.__last_failure_time > self.__cooldown:
                 self.__get_client()
             else:
-                remaining_cooldown = self.__cooldown - (time.time() - self.__last_failure_time)
-                raise ConnectionError("Did not attempt to connect to client: remaining Cooldown: " + repr(remaining_cooldown))
+                raise ConnectionError("Did not attempt to connect to client: remaining Cooldown")
                 
         
     def create_prompt(self, prompt: str, metadata: dict):
