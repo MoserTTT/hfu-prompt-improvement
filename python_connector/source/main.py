@@ -89,7 +89,7 @@ class main:
                 unexpected_error = repr(unexpected_error)
                 return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
         
-        @self.app.route("/call_llm", methods=["GET"])
+        @self.app.route("/call_llm", methods=["POST"])
         def call_llm():
             data = request.get_json()
             if not data or "prompt" not in data:
