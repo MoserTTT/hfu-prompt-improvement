@@ -27,7 +27,6 @@ const AiAssistant = () => {
             <Modal
                 open={assistantOpen}
                 onClose={closeAssistant}
-                aria-labelledby="AI assistant"
             >
                 <Box>
                     {

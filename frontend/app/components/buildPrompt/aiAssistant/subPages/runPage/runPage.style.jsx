@@ -1,15 +1,14 @@
-import { colors } from "@mui/material";
 import FONTS from "../../../../../../styles/fonts";
 import COLORS from "../../../../../../styles/theme";
 
 const styles = {
-
     modalBox: {
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
         textAlign: 'center',
+        overflowY: 'hidden',
 
         width: '70%',
         height: '70%',
@@ -23,13 +22,14 @@ const styles = {
 
     heading: {
         ...FONTS.displayMedium,
-        background: 'linear-gradient(90deg, #9A76FF 0%, #007AFF 100%)',
+        padding: '16px',
+        margin: 0,
+        
+        background: 'linear-gradient(90deg, #9A76FF 20%, #007AFF 80%)',
         WebkitBackgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
         backgroundClip: 'text',
-        textFillColor: 'transparent',
-        
-        margin: '20px'
+        textFillColor: 'transparent'
     },
 
     divider: {
@@ -37,49 +37,50 @@ const styles = {
     },
 
     promptNameDiv: {
-        marginLeft: 'auto',
-        marginRight: '25px',
-        marginTop: '55px',
-        padding: '15px',
-
-        width: 'fit-content',
-        
-        borderRadius: '22px',
-        backgroundColor: COLORS.darkGray,
+        padding: '8px 16px',
+        borderBottom: '1px solid #e0e0e0',
     },
-
+    
     promptName: {
         ...FONTS.bodyLarge,
         color: COLORS.white,
-
+        fontWeight: '500',
         margin: 0,
-        textAlign: 'center'
     },
 
     responseDiv: {
-        float: 'left',
-
-        marginTop: '-100px',
-        marginRight: 'auto',
-        marginLeft: 0
+        flex: '1',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'scroll',
+        height: '90%'
     },
 
     innerResponseDiv: {
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'flex-start',
+        marginBottom: '12px',
+        overflowY: 'scroll'
     },
 
     aiImage: {
-        transform: 'scale(0.222)',
-        marginLeft: '-120px',
-        marginRight: '-120px'
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        marginRight: '8px',
     },
 
     responseText: {
         ...FONTS.bodyLarge,
         color: COLORS.white,
-        textAlign: 'left'
+        padding: '10px',
+        borderRadius: '10px',
+        marginTop: '-2px',
+        maxWidth: '80%',
+        textAlign: 'left',
+        wordWrap: 'break-word' // Ensure long words
     }
-}
+};
 
 export default styles;

@@ -37,7 +37,8 @@ const styles = {
 
     buildPrompt: {
         flex: 1,
-        overflowX: 'hidden'
+        overflowX: 'hidden',
+        borderRadius: '10px'
     }
 }
 

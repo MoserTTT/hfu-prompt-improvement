@@ -28,7 +28,8 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
     const searchByVector = async () => {
         console.log("Search...");
         const query = encodeURIComponent(document.getElementById("searchTextField").value);
-        const url = `http://127.0.0.1:5000/prompt_by_vector?query=${query}?top_n=${10}`;
+        const top_n = encodeURIComponent(15);
+        const url = `http://127.0.0.1:5000/prompt_by_vector?query=${query}&top_n=${top_n}`;
       
         try {
             const response = await fetch(url);

@@ -4,9 +4,12 @@ const styles = {
 
     root: {
         backgroundColor: COLORS.lightGray,
-        borderColor: COLORS.gray,
+        
         width: '95%',
+        height: '99%',
         padding: '20px',
+        
+        borderColor: COLORS.gray
     }
 }
 
