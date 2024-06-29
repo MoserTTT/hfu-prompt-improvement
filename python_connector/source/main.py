@@ -9,7 +9,7 @@ class main:
     
     def __init__(self):
         self.db  = chromaDB_connector.chromaDB_connector(embedding_api_key=os.getenv("EF_API_KEY"))
-        self.llm = LLM_connector.AzureOpenAIHandler(api_key=os.getenv("EF_API_KEY"))
+        self.llm = LLM_connector.AzureOpenAIHandler(api_key=os.getenv("EF_API_KEY"), deployment_name="gpt-4o")
         self.app = Flask(__name__)
         self.setup_routes()
         CORS(self.app)  # This will enable CORS for all routes
