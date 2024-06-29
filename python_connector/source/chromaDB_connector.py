@@ -100,9 +100,9 @@ class chromaDB_connector:
             name=metadata["name"])  # dynamically look for the next version
 
         if "version" in metadata:
-            if int(metadata["version"]) > next_highest_version or int(metadata["version"]) < 0:
+            if int(metadata["version"]) > next_highest_version or int(metadata["version"]) < 1:
                 raise ValueError(
-                    f"Version has to be at least 0 and can not be higher than your highest version yet + 1 ({str(next_highest_version)})")
+                    f"Version has to be at least 1 and can not be higher than your highest version yet + 1 ({str(next_highest_version)})")
         else:
             metadata["version"] = next_highest_version
 
