@@ -239,11 +239,10 @@ Improved prompt: """
         # set the ratings in previous metadata
         previous_metadata["ratings"] = scores
 
-        # Remove unnecessary/auto-generated metadata
-        previous_metadata.pop("version")
-        previous_metadata.pop("date_of_creation")
+        # Remove auto-generated metadata
+        previous_metadata.pop("date_of_creation")   #TODO should probably remain the same
 
-        # Create new version of prompt by making a REST request
+        # Update version of prompt by making a REST request
         body = {
             "prompt": prompt_to_eval,
             "metadata": previous_metadata
@@ -259,7 +258,7 @@ Improved prompt: """
 
         # Return the new name and id and the scores
         prompt_name_and_id_split = prompt_name_and_id.split(":")
-        return_dict = {"id": prompt_name_and_id_split[0] + ":" + str(int(prompt_name_and_id_split[1].strip())+1)}
+        return_dict = {"id": prompt_name_and_id_split[0] + ":" + str(int(prompt_name_and_id_split[1].strip()))}
         for i in range(int(len(scores)/3)):
             return_dict[scores[i*3]] = [scores[1 + i*3], scores[2 + i*3]],
         return return_dict
@@ -282,6 +281,11 @@ Improved prompt: """
         # Check if ratings exist
         if "ratings" not in user_metadata:
             self.eval_prompt_by_LLM(prompt_name_and_id=prompt_name_and_id)
+            
+            # fetch prompt again
+            response = self.__request_prompt(prompt_name_and_id)
+            prompt = json.loads(response.text)["documents"][0]
+            user_metadata = json.loads(response.text)["metadatas"][0]
 
         ratings = user_metadata["ratings"]
         scores = ""

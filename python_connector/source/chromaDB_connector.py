@@ -4,6 +4,7 @@ import re
 import time
 from datetime import datetime
 
+
 class chromaDB_connector:
     """
     Connects to the ChromaDB database and provides methods to interact with prompts.
@@ -34,16 +35,15 @@ class chromaDB_connector:
         )
         # defining the allowed metadata keys for metadata validation
         self.allowed_metadata_keys = [
-            "name", "description", "author", "models", "tags", "languages", "ratings", "comments"]
+            "name", "description", "author", "models", "tags", "languages", "ratings", "comments", "version"]
 
         self.__last_failure_time = None
         self.__cooldown = 20
         # getting the client
         try:
-           self.__get_client()
+            self.__get_client()
         except ConnectionError as e:
             print(e)
-            
 
     def __get_client(self):
         """
@@ -52,16 +52,17 @@ class chromaDB_connector:
         This step might have to be redone depending on chroma service availability
         """
         try:
-            self.__client = chromadb.HttpClient(host='chroma', port=8000)  
-                # getting or creating the collection
+            self.__client = chromadb.HttpClient(host='chroma', port=8000)
+            # getting or creating the collection
             self.__prompt_collection = self.__client.get_or_create_collection(
                 embedding_function=self.__openai_ef, name="prompts")
-            
+
         except Exception as e:
             self.__client = None
             self.__last_failure_time = time.time()
-            raise ConnectionError("Could not connect to Chroma Service. Further Info: " + repr(e))
-        
+            raise ConnectionError(
+                "Could not connect to Chroma Service. Further Info: " + repr(e))
+
     def __is_client_reachable(self):
         if self.__client is None:
             return False
@@ -70,16 +71,15 @@ class chromaDB_connector:
             return True
         except:
             return False
-        
-    
+
     def __ensure_client_available(self):
         if not self.__is_client_reachable():
             if self.__last_failure_time and time.time() - self.__last_failure_time > self.__cooldown:
                 self.__get_client()
             else:
-                raise ConnectionError("Did not attempt to connect to client: remaining Cooldown")
-                
-        
+                raise ConnectionError(
+                    "Did not attempt to connect to client: remaining Cooldown")
+
     def create_prompt(self, prompt: str, metadata: dict):
         """
         Saves a prompt to the database.
@@ -96,13 +96,21 @@ class chromaDB_connector:
         metadata = self.__convert_metadata_lists_to_string(metadata=metadata)
 
         # enriching metadata
-        metadata["version"] = self.__find_new_version(
+        next_highest_version = self.__find_new_version(
             name=metadata["name"])  # dynamically look for the next version
+
+        if "version" in metadata:
+            if int(metadata["version"]) > next_highest_version or int(metadata["version"]) < 0:
+                raise ValueError(
+                    f"Version has to be at least 0 and can not be higher than your highest version yet + 1 ({str(next_highest_version)})")
+        else:
+            metadata["version"] = next_highest_version
+
         metadata["date_of_creation"] = datetime.now().strftime(
             '%Y-%m-%dT%H:%M:%S')
 
         # adding the prompt to the collection
-        self.__prompt_collection.add(
+        self.__prompt_collection.upsert(
             documents=[prompt],
             metadatas=metadata,
             ids=[f"{metadata['name']}:{metadata['version']}"]  # id is unique
@@ -219,9 +227,15 @@ class chromaDB_connector:
         validate_list("models", metadata.get("models"))
         validate_list("tags", metadata.get("tags"))
         validate_list("languages", metadata.get("languages"))
-        validate_list("ratings", metadata.get("ratings"), min_length=1, max_length=500)  
+        validate_list("ratings", metadata.get("ratings"),
+                      min_length=1, max_length=500)
         validate_list("comments", metadata.get("comments"),
                       max_length=500)
+        if "version" in metadata:
+            try:
+                int(metadata.get("version"))
+            except:
+                raise ValueError("Version has to be INT!")
 
     def __convert_metadata_lists_to_string(self, metadata: dict):
         """
@@ -322,4 +336,3 @@ class chromaDB_connector:
                 version = prompt_metadata["version"] + 1
 
         return version
-
