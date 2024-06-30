@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Drawer, List, TextField } from "@mui/material"; // Importing components from MUI
+import { Drawer, List, Box, TextField, Typography } from "@mui/material"; // Importing components from MUI
 import { Prompt } from "../../../components"; // Importing custom Prompt component
 import styles from "./styles/searchSidebar.style"; // Importing styles for SearchSidebar
 import FilterIcon from "../../../../assets/icons/components/FilterIcon"; // Importing FilterIcon component
 import COLORS from "../../../../styles/theme"; // Importing theme colors
 import FilterSidebar from "../filterSidebar/FilterSidebar"; // Importing FilterSidebar component
+import PromptSkeleton from "../../prompt/utils/promptSkeleton/PromptSkeleton";
 
 const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
     
@@ -12,6 +13,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
 
     const [iconColor, setIconColor] = useState(COLORS.blue); // State for icon color
     const [isFilterOpen, setIsFilterOpen] = useState(false); // State for FilterSidebar
+    const [loading, setLoading] = useState(false);
 
     // Toggle function to open/close FilterSidebar and close SearchSidebar
     const handleToggleFilter = () => {
@@ -26,7 +28,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
     };
 
     const searchByVector = async () => {
-        console.log("Search...");
+        setLoading(true);
         const query = encodeURIComponent(document.getElementById("searchTextField").value);
         const top_n = encodeURIComponent(15);
         const url = `http://127.0.0.1:5000/prompt_by_vector?query=${query}&top_n=${top_n}`;
@@ -61,7 +63,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
         } catch (error) {
             console.error('Error searching by vector:', error);
         }
-        console.log("...done");
+        setLoading(false);
     };
 
     const handleSearchKeyDown = (e) => {
@@ -103,17 +105,29 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
                 </div>
                     <List id="promptList" style={ styles.list }>
                         {
-                            prompts.map((prompt, index) => 
-                                <div key={index} style={ styles.prompt }>
-                                    <Prompt
-                                        name={prompt.name}
-                                        dateCreated={prompt.dateCreated}
-                                        status={prompt.status}
-                                        tags={prompt.tags}
-                                        author={prompt.author}
-                                        content={prompt.content}
-                                    />
+                            loading ? (
+                                <div style={ styles.prompt }>
+                                    <PromptSkeleton/>
                                 </div>
+                            ) : prompts.length > 0 ? (
+                                    prompts.map((prompt, index) => 
+                                        <div key={index} style={ styles.prompt }>
+                                            <Prompt
+                                                name={prompt.name}
+                                                dateCreated={prompt.dateCreated}
+                                                status={prompt.status}
+                                                tags={prompt.tags}
+                                                author={prompt.author}
+                                                content={prompt.content}
+                                            />
+                                        </div>
+                                    )
+                            ) : (
+                                <Box sx={ styles.noResults }>
+                                    <Typography variant="body1" color="textSecondary">
+                                        No prompts found. Try another search.
+                                    </Typography>
+                                </Box>
                             )
                         }
                     </List>

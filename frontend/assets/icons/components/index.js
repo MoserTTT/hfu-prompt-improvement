@@ -5,6 +5,8 @@ import ClockIcon from "./ClockIcon";
 import UserIcon from "./UserIcon";
 import SearchIcon from "./SearchIcon";
 import MagicIcon from "./MagicIcon";
+import StatisticIcon from "./StatisticIcon";
+import OldSettingsIcon from "./OldSettingsIcon";
 
 export {
     SettingsIcon,
@@ -13,5 +15,7 @@ export {
     ClockIcon,
     UserIcon,
     SearchIcon,
-    MagicIcon
+    MagicIcon,
+    StatisticIcon,
+    OldSettingsIcon
 };

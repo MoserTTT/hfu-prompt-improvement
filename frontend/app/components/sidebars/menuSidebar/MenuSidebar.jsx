@@ -1,6 +1,6 @@
 import React from "react";
 import COLORS from "../../../../styles/theme";
-import { BuildPromptIcon, SettingsIcon } from "../../../../assets/icons/components";
+import { BuildPromptIcon, OldSettingsIcon, SettingsIcon, StatisticIcon } from "../../../../assets/icons/components";
 import { Drawer, ListItemIcon, ListItemText, Typography, List, Divider, ListItemButton } from "@mui/material";
 import styles from "./styles/menuSidebar.style";
 import { useNavigate } from "@remix-run/react";
@@ -15,12 +15,13 @@ const MenuSidebar = ({ onToggle }) => {
   // track the currently selected menu item index
   const [selectedItem, setSelectedItem] = useState(0);
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   // Define menu items as an array of objects
   const menuItems = [
     {
       text: 'Build Prompt',
+      disabled: false,
       icon: <BuildPromptIcon
               color={(selectedItem === 0) ? COLORS.blue : COLORS.black}
               height={42}
@@ -29,14 +30,35 @@ const MenuSidebar = ({ onToggle }) => {
       path: '/buildPrompt'
     },
     {
+      text: 'MyPrompt',
+      disabled: true,
+      icon: <OldSettingsIcon
+              color={(selectedItem === 1) ? COLORS.blue : COLORS.black}
+              height={42}
+              width={42}
+              />,
+      path: '/'
+    },
+    {
+      text: 'Statistics',
+      disabled: true,
+      icon: <StatisticIcon
+              color={(selectedItem === 1) ? COLORS.blue : COLORS.black}
+              height={42}
+              width={42}
+              />,
+      path: '/'
+    },
+    {
       text: 'Settings',
+      disabled: true,
       icon: <SettingsIcon
               color={(selectedItem === 1) ? COLORS.blue : COLORS.black}
               height={42}
               width={42}
               />,
       path: '/'
-    }
+    },
   ];
 
   function onChangeCollapse(){
@@ -88,6 +110,7 @@ const MenuSidebar = ({ onToggle }) => {
           {menuItems.map((item, index) => (
             <ListItemButton
               key={item.text}
+              disabled={item.disabled}
               style={ styles.listItemButton }
               onClick={() => onListItemClick(index, item.path)}>
               <ListItemIcon>{item.icon}</ListItemIcon>

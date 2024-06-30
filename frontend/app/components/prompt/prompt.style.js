@@ -27,6 +27,7 @@ const styles = {
 
     name: {
         ...FONTS.headlineSmall,
+        fontSize: '130%',
         margin: '15px'
     },
     

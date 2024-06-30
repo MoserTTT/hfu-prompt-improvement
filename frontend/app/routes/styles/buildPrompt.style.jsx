@@ -28,7 +28,7 @@ const styles = {
 
     header: {
         ...FONTS.displaySmall,
-        marginLeft: '30px'
+        marginLeft: '5px'
     },
 
     searchSidebar: {
@@ -37,7 +37,7 @@ const styles = {
 
     buildPrompt: {
         flex: 1,
-        overflowX: 'hidden',
+        overflow: 'hidden',
         borderRadius: '10px'
     }
 }

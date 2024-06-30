@@ -14,12 +14,12 @@ import { useEffect, useState } from "react";
 
 export function Layout({ children }) {
 
-  const [sidebarWidth, setSidebarWidth] = useState('260px');
+  const [sidebarWidth, setSidebarWidth] = useState('125px');
 
   const [isClient, setIsClient] = useState(false);
 
   const toggleSidebar = (isCollapsed) => {
-    setSidebarWidth(isCollapsed? '260px' : '110px');
+    setSidebarWidth(isCollapsed? '265px' : '125px');
   }
 
   useEffect(() => {

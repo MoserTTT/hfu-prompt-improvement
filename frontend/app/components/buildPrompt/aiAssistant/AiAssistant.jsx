@@ -1,5 +1,5 @@
 import styles from "./aiAssistant.style";
-import { Box, Modal } from "@mui/material";
+import { Box, Fade, Modal } from "@mui/material";
 import { useState } from "react";
 import FloatingButton from "./floatingButton/FloatingButton";
 import WelcomePage from "./subPages/welcomePage/WelcomePage";
@@ -28,20 +28,22 @@ const AiAssistant = () => {
                 open={assistantOpen}
                 onClose={closeAssistant}
             >
-                <Box>
-                    {
-                        pageSelector == "welcomePage" && 
-                            <WelcomePage
-                                onClickAnalysis={() => setPageSelector("analysisPage")}
-                                onClickRun={() => setPageSelector("runPage")} />
+                <Fade in={assistantOpen}>
+                    <Box>
+                        {
+                            pageSelector == "welcomePage" && 
+                                <WelcomePage
+                                    onClickAnalysis={() => setPageSelector("analysisPage")}
+                                    onClickRun={() => setPageSelector("runPage")} />
 
-                        || pageSelector == "analysisPage" && 
-                            <AnalysisPage/>
+                            || pageSelector == "analysisPage" && 
+                                <AnalysisPage/>
 
-                        || pageSelector == "runPage" &&
-                            <RunPage/>
-                    }
-                </Box>
+                            || pageSelector == "runPage" &&
+                                <RunPage/>
+                        }
+                    </Box>
+                </Fade>
             </Modal>
             <FloatingButton onClick={openAssistant} />
         </div>

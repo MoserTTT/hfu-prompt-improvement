@@ -42,6 +42,17 @@ const styles = {
         display: "flex", // Flexbox container
         justifyContent: 'space-between', // Space evenly between items
         alignItems: "center" // Centered items vertically
+    },
+
+    skeletonBody: {
+        margin: '20px'
+    },
+
+    noResults: {
+        display: 'flex',
+        alignItems: 'center',
+        textAlign: 'center',
+        padding: '10px'
     }
 };
 
