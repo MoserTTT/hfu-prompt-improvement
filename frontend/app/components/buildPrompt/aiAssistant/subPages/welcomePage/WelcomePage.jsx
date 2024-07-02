@@ -18,7 +18,6 @@ const WelcomePage = ({ onClickAnalysis, onClickRun }) => {
 
             <div style={ styles.buttonDiv }>
                 <button
-                    disabled
                     id="buttonAnalysis"
                     onClick={onClickAnalysis}
                     style={{

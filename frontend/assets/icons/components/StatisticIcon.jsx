@@ -1,3 +1,4 @@
+import React from "react";
 
 const StatisticIcon = ({ color, width, height}) => {
     return(

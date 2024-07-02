@@ -1,20 +1,21 @@
 import React, { useEffect, useRef } from "react";
-import * as MDX from '@mdxeditor/editor';
-import '@mdxeditor/editor/style.css';
-import { useDroppable } from '@dnd-kit/core';
+import * as MDX from "@mdxeditor/editor";
+import "@mdxeditor/editor/style.css";
+import { useDroppable } from "@dnd-kit/core";
 import styles from "./styles/textPromptArea.style";
 import useStore from "../utils/markdownContentStore";
 import jsxComponentDescriptors from "./integratedPrompt/IntegratedPrompt";
 
 const TextPromptArea = () => {
   // Hook to set the droppable area
-  const { setNodeRef } = useDroppable({ id: 'droppable' });
+  const { setNodeRef } = useDroppable({ id: "droppable" });
 
   // Accessing state variables from the store
-  const markdownContent = useStore(state => state.markdownContent);
-  const setMarkdownContent = useStore(state => state.setMarkdownContent);
-  const contentAddedByDnD = useStore(state => state.contentAddedByDnD);
-  const setDnD = useStore(state => state.setDnD);
+  const markdownContent = useStore((state) => state.markdownContent);
+  const diffMarkdownContent = useStore((state) => state.diffMarkdownContent);
+  const setMarkdownContent = useStore((state) => state.setMarkdownContent);
+  const contentAddedByDnD = useStore((state) => state.contentAddedByDnD);
+  const setDnD = useStore((state) => state.setDnD);
 
   // Ref to the contentEditable area
   const contentEditableRef = useRef(null);
@@ -27,7 +28,10 @@ const TextPromptArea = () => {
         // Getting the contentEditable element
         const contentEditableElement = contentEditableRef.current;
         // Checking if contentEditableElement is a valid element
-        if (contentEditableElement && contentEditableElement.nodeType === Node.ELEMENT_NODE) {
+        if (
+          contentEditableElement &&
+          contentEditableElement.nodeType === Node.ELEMENT_NODE
+        ) {
           // Focusing the contentEditable element
           contentEditableElement.focus();
           // Creating a range
@@ -50,18 +54,18 @@ const TextPromptArea = () => {
   }, [contentAddedByDnD, setDnD]);
 
   return (
-    <div ref={setNodeRef} style={ styles.markdownArea }>
+    <div ref={setNodeRef} style={styles.markdownArea}>
       <MDX.MDXEditor
         key={contentAddedByDnD ? markdownContent : undefined}
         ref={contentEditableRef}
         markdown={markdownContent}
-        onChange={val => setMarkdownContent(val, false)}
+        onChange={(val) => setMarkdownContent(val, false)}
         contentEditableClassName="mdEditor"
         plugins={[
           MDX.jsxPlugin({ jsxComponentDescriptors }), // Include the plugin and descriptor
           MDX.diffSourcePlugin({
-            diffMarkdown: 'An older version',
-            viewMode: 'rich-text',
+            diffMarkdown: diffMarkdownContent,
+            viewMode: "rich-text",
             readOnlyDiff: true,
           }),
           MDX.toolbarPlugin({
@@ -83,12 +87,17 @@ const TextPromptArea = () => {
                   <MDX.Separator />
                 </MDX.DiffSourceToggleWrapper>
               </>
-            )
+            ),
           }),
-          MDX.codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
-          MDX.codeMirrorPlugin({ codeBlockLanguages: { js: 'JavaScript', css: 'CSS' } }),
-          MDX.headingsPlugin(), MDX.listsPlugin(), MDX.quotePlugin(), MDX.thematicBreakPlugin(),
-          MDX.markdownShortcutPlugin()
+          MDX.codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
+          MDX.codeMirrorPlugin({
+            codeBlockLanguages: { js: "JavaScript", css: "CSS" },
+          }),
+          MDX.headingsPlugin(),
+          MDX.listsPlugin(),
+          MDX.quotePlugin(),
+          MDX.thematicBreakPlugin(),
+          MDX.markdownShortcutPlugin(),
         ]}
       />
     </div>

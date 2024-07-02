@@ -1,3 +1,4 @@
+import React from "react";
 
 const OldSettingsIcon = ({ color, width, height }) => {
     return(

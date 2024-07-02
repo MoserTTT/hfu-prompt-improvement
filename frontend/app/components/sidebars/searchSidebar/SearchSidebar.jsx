@@ -5,6 +5,7 @@ import FilterIcon from "../../../../assets/icons/components/FilterIcon";
 import COLORS from "../../../../styles/theme";
 import FilterSidebar from "../filterSidebar/FilterSidebar";
 import PromptSkeleton from "../../prompt/utils/promptSkeleton/PromptSkeleton";
+import Prompt from "../../prompt/Prompt";
 
 const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
     const [prompts, setPrompts] = useState([]);
@@ -44,7 +45,9 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
                 };
             });
 
-            setPrompts(newPrompts);
+            if(newPrompts){
+                setPrompts(newPrompts);
+            }
             console.log(responseData);
             console.log('Prompt found:', responseData);
         } catch (error) {

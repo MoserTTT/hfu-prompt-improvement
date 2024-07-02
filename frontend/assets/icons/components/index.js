@@ -7,6 +7,10 @@ import SearchIcon from "./SearchIcon";
 import MagicIcon from "./MagicIcon";
 import StatisticIcon from "./StatisticIcon";
 import OldSettingsIcon from "./OldSettingsIcon";
+import UploadIcon from "./UploadIcon";
+import SpeakingUserIcon from "./SpeakingUserIcon";
+import CopyIcon from "./CopyIcon";
+import CheckIcon from "./CheckIcon";
 
 export {
     SettingsIcon,
@@ -17,5 +21,9 @@ export {
     SearchIcon,
     MagicIcon,
     StatisticIcon,
-    OldSettingsIcon
+    OldSettingsIcon,
+    UploadIcon,
+    SpeakingUserIcon,
+    CopyIcon,
+    CheckIcon
 };

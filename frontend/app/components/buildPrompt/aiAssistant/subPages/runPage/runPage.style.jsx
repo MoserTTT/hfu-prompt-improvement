@@ -53,7 +53,7 @@ const styles = {
         padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        overflowY: 'scroll',
+        overflowY: 'auto',
         height: '90%'
     },
 
@@ -61,7 +61,7 @@ const styles = {
         display: 'flex',
         alignItems: 'flex-start',
         marginBottom: '12px',
-        overflowY: 'scroll'
+        overflowY: 'auto'
     },
 
     aiImage: {
@@ -79,7 +79,7 @@ const styles = {
         marginTop: '-2px',
         maxWidth: '80%',
         textAlign: 'left',
-        wordWrap: 'break-word' // Ensure long words
+        wordWrap: 'break-word'
     }
 };
 
