@@ -1,83 +1,56 @@
-// filterSidebar.style.js
-
-import FONTS from "../../../../../styles/fonts"; // Import fonts
-import COLORS from "../../../../../styles/theme"; // Import theme colors
-import "./filterSidebar.style.css"; // Import the CSS file for additional styles
+import COLORS from "../../../../../styles/theme";
 
 const styles = {
     root: {
-        backgroundColor: '#fff', // White background color
-        overflowX: 'auto', // Horizontal overflow handling
-        overflowY: 'auto', // Vertical overflow handling
+        backgroundColor: '#fff',
+        overflowX: 'auto',
+        overflowY: 'auto',
+        width: '35vw',
     },
-
-    navHeader: {
-        display: 'flex', // Flexbox container
-        justifyContent: 'space-between', // Space evenly between items
-        alignItems: 'center', // Centered vertically
-        padding: '10px 20px', // Padding
-        borderBottom: '1px solid #ddd', // Bottom border
+    header: {
+        padding: '20px 25px',
+        borderBottom: `1px solid ${COLORS.lightGray}`,
     },
-
-    collapseArrow: {
-        background: 'none', // Transparent background
-        border: 'none', // No border
-        cursor: 'pointer', // Pointer cursor
+    backButton: {
+        color: COLORS.blue,
+        textTransform: 'none',
     },
-
-    formControl: {
-        margin: '10px 20px', // Margin
-        minWidth: '120px', // Minimum width
-        width: 'calc(100% - 40px)', // Full width minus margins
-    },
-
-    select: {
-        width: '100%', // Full width
-    },
-
-    formControlFocused: {
-        border: '1px solid #ccc', // Border color on focus
-    },
-
-    inputLabel: {
-        background: '#fff', // White background
-        padding: '0 5px', // Padding
-    },
-
     searchField: {
-        margin: '30px 25px 20px 25px', // Margin
-        backgroundColor: COLORS.white || '#fff', // Background color from theme or fallback to white
-        width: '30vw', // Width based on viewport width
+        margin: '30px 25px 20px 25px',
+        backgroundColor: COLORS.white,
+        flex: 1,
     },
-
+    searchButton: {
+        margin: '30px 25px 20px 0',
+        height: '56px',
+    },
     list: {
-        overflowY: 'auto', // Vertical overflow handling
-        justifyContent: 'center', // Centered content
-        width: 'fit-content', // Width based on content
-        backgroundColor: COLORS.lightGray || '#f0f0f0', // Background color from theme or fallback to light gray
-        marginLeft: '25px', // Left margin
-        borderRadius: '15px', // Rounded corners
+        overflowY: 'auto',
+        justifyContent: 'center',
+        width: 'calc(100% - 50px)',
+        backgroundColor: COLORS.lightGray,
+        margin: '0 25px',
+        borderRadius: '15px',
+        padding: '10px 0',
     },
-
-    prompt: {
-        width: 'fit-content', // Width based on content
-        margin: '20px 20px 40px 20px', // Margin
+    authorItem: {
+        padding: '10px 20px',
+        margin: '5px 0',
+        backgroundColor: COLORS.white,
+        borderRadius: '8px',
     },
-
-    filterButton: {
-        background: 'none', // Transparent background
-        border: 'none', // No border
-        justifyContent: 'center', // Centered content
-        alignItems: 'center', // Centered items
-        width: 'fit-content', // Width based on content
-        margin: '30px 20px 20px 0', // Margin
-    },
-
     divStyle: {
-        display: 'flex', // Flexbox container
-        justifyContent: 'space-between', // Space evenly between items
-        alignItems: 'center', // Centered items vertically
+        display: "flex",
+        justifyContent: 'space-between',
+        alignItems: "center"
     },
+    noResults: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+        textAlign: 'center',
+    }
 };
 
 export default styles;

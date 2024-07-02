@@ -1,48 +1,37 @@
 import React, { useState } from "react";
-import { Drawer, List, Box, TextField, Typography } from "@mui/material"; // Importing components from MUI
-import { Prompt } from "../../../components"; // Importing custom Prompt component
-import styles from "./styles/searchSidebar.style"; // Importing styles for SearchSidebar
-import FilterIcon from "../../../../assets/icons/components/FilterIcon"; // Importing FilterIcon component
-import COLORS from "../../../../styles/theme"; // Importing theme colors
-import FilterSidebar from "../filterSidebar/FilterSidebar"; // Importing FilterSidebar component
+import { Drawer, List, Box, TextField, Typography } from "@mui/material";
+import styles from "./styles/searchSidebar.style";
+import FilterIcon from "../../../../assets/icons/components/FilterIcon";
+import COLORS from "../../../../styles/theme";
+import FilterSidebar from "../filterSidebar/FilterSidebar";
 import PromptSkeleton from "../../prompt/utils/promptSkeleton/PromptSkeleton";
 
 const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
-    
     const [prompts, setPrompts] = useState([]);
-
-    const [iconColor, setIconColor] = useState(COLORS.blue); // State for icon color
-    const [isFilterOpen, setIsFilterOpen] = useState(false); // State for FilterSidebar
+    const [iconColor, setIconColor] = useState(COLORS.blue);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [selectedAuthor, setSelectedAuthor] = useState("");
 
-    // Toggle function to open/close FilterSidebar and close SearchSidebar
     const handleToggleFilter = () => {
-        setIsFilterOpen(!isFilterOpen); // Toggle FilterSidebar
-        setSearchOpen(false); // Close SearchSidebar
+        setIsFilterOpen(!isFilterOpen);
     };
 
-    // Function to close FilterSidebar and reopen SearchSidebar
-    const handleCloseFilter = () => {
-        setIsFilterOpen(false); // Close FilterSidebar
-        setSearchOpen(true); // Reopen SearchSidebar
-    };
-
-    const searchByVector = async () => {
+    const handleSearch = async () => {
         setLoading(true);
         const query = encodeURIComponent(document.getElementById("searchTextField").value);
         const top_n = encodeURIComponent(15);
-        const url = `http://127.0.0.1:5000/prompt_by_vector?query=${query}&top_n=${top_n}`;
-      
+        const url = selectedAuthor 
+            ? `http://127.0.0.1:5000/prompt_by_metadata?filter=${JSON.stringify({ author: selectedAuthor })}`
+            : `http://127.0.0.1:5000/prompt_by_vector?query=${query}&top_n=${top_n}`;
+
         try {
             const response = await fetch(url);
-          
             if (!response.ok) {
-              throw new Error('Failed to search by vector');
+                throw new Error('Failed to search');
             }
-      
-            const responseData = await response.json();
 
-            // Extracting prompts from responseData
+            const responseData = await response.json();
             const newPrompts = responseData.documents[0].map((doc, index) => {
                 const metadata = responseData.metadatas[0][index];
                 return {
@@ -51,44 +40,46 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
                     status: "Active",
                     tags: metadata.tags,
                     author: metadata.author,
-                    content: doc // Assuming content is the document content
+                    content: doc
                 };
             });
 
-            // Update the prompts state with the new prompts
             setPrompts(newPrompts);
-          
             console.log(responseData);
-            console.log('Prompt found by vector:', responseData);
+            console.log('Prompt found:', responseData);
         } catch (error) {
-            console.error('Error searching by vector:', error);
+            console.error('Error searching:', error);
         }
         setLoading(false);
     };
 
     const handleSearchKeyDown = (e) => {
-        // pressed enter?
-        if(e.keyCode == 13){
-            searchByVector();
+        if (e.key === 'Enter') {
+            handleSearch();
         }
-    }
+    };
+
+    const handleAuthorSelect = (author) => {
+        setSelectedAuthor(author);
+        setSearchOpen(false); // Close the filter sidebar after selecting an author
+        handleSearch(); // Perform search with the selected author
+    };
 
     return (
         <div style={styles.root}>
-            {/* Display FilterSidebar if isFilterOpen is true */}
-            {isFilterOpen && <FilterSidebar onClose={handleCloseFilter} />}
-
+            {isFilterOpen && <FilterSidebar isOpen={isFilterOpen} onClose={() => setIsFilterOpen(false)} onBackToSearch={() => setIsFilterOpen(false)} onSelectAuthor={handleAuthorSelect} />}
+            
             <Drawer
                 variant="temporary"
                 anchor="right"
                 open={searchOpen}
-                onClose={() => setSearchOpen(false)} // Close SearchSidebar on onClose event
+                onClose={() => setSearchOpen(false)}
                 style={style}
-                className="search-drawer" // CSS class for SearchSidebar
+                className="search-drawer"
             >
                 <div style={styles.divStyle}>
                     <TextField
-                        style={ styles.searchField }
+                        style={styles.searchField}
                         id="searchTextField"
                         label="Search field"
                         type="search"
@@ -96,41 +87,39 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
                     />
                     <button
                         style={styles.filterButton}
-                        onClick={handleToggleFilter} // Click handler for toggling FilterSidebar visibility
-                        onMouseEnter={() => setIconColor(COLORS.darkBlue)} // Change icon color on hover
-                        onMouseLeave={() => setIconColor(COLORS.blue)} // Reset icon color on mouse leave
+                        onClick={handleToggleFilter}
+                        onMouseEnter={() => setIconColor(COLORS.darkBlue)}
+                        onMouseLeave={() => setIconColor(COLORS.blue)}
                     >
-                        <FilterIcon color={iconColor} /> {/* Filter icon with dynamic color */}
+                        <FilterIcon color={iconColor} />
                     </button>
                 </div>
-                    <List id="promptList" style={ styles.list }>
-                        {
-                            loading ? (
-                                <div style={ styles.prompt }>
-                                    <PromptSkeleton/>
-                                </div>
-                            ) : prompts.length > 0 ? (
-                                    prompts.map((prompt, index) => 
-                                        <div key={index} style={ styles.prompt }>
-                                            <Prompt
-                                                name={prompt.name}
-                                                dateCreated={prompt.dateCreated}
-                                                status={prompt.status}
-                                                tags={prompt.tags}
-                                                author={prompt.author}
-                                                content={prompt.content}
-                                            />
-                                        </div>
-                                    )
-                            ) : (
-                                <Box sx={ styles.noResults }>
-                                    <Typography variant="body1" color="textSecondary">
-                                        No prompts found. Try another search.
-                                    </Typography>
-                                </Box>
-                            )
-                        }
-                    </List>
+                <List style={styles.list}>
+                    {loading ? (
+                        <div style={styles.prompt}>
+                            <PromptSkeleton />
+                        </div>
+                    ) : prompts.length > 0 ? (
+                        prompts.map((prompt, index) => (
+                            <div key={index} style={styles.prompt}>
+                                <Prompt
+                                    name={prompt.name}
+                                    dateCreated={prompt.dateCreated}
+                                    status={prompt.status}
+                                    tags={prompt.tags}
+                                    author={prompt.author}
+                                    content={prompt.content}
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <Box sx={styles.noResults}>
+                            <Typography variant="body1" color="textSecondary">
+                                No prompts found. Try another search.
+                            </Typography>
+                        </Box>
+                    )}
+                </List>
             </Drawer>
         </div>
     );

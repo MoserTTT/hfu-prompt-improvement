@@ -1,123 +1,107 @@
-import React, { useEffect, useState } from "react";
-import { Drawer, List, TextField, Typography, Divider, MenuItem, FormControl, Select, InputLabel } from "@mui/material";
-import CollapsableArrow from "../menuSidebar/assets/CollapsableArrow";
-import COLORS from "../../../../styles/theme";
-import styled from "@emotion/styled";
+import React, { useState, useEffect } from "react";
+import { Drawer, List, Box, TextField, Typography, Button } from "@mui/material";
 import styles from "./styles/filterSidebar.style";
+import COLORS from "../../../../styles/theme";
 
-const StyledDrawer = styled(Drawer)`
-    ${styles.root}
-`;
+const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSelectAuthor }) => {
+    const [authors, setAuthors] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
 
-const FilterSidebar = ({ onClose }) => {
-    // State variables for different filters
-    const [authorFilter, setAuthorFilter] = useState("");
-    const [creationDateFilter, setCreationDateFilter] = useState("");
-    const [tagFilter, setTagFilter] = useState("");
-    const [languageFilter, setLanguageFilter] = useState("");
-    const [statusFilter, setStatusFilter] = useState("");
-    const [modelFilter, setModelFilter] = useState("");
-    const [isFilterOpen, setIsFilterOpen] = useState(true); // State to control if the sidebar is open
+    const handleAuthorSearch = async () => {
+        const url = `http://127.0.0.1:5000/authors?searchTerm=${encodeURIComponent(searchTerm)}`;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to fetch authors');
+            }
 
-    // Function to handle closing the sidebar
-    const handleClose = () => {
-        onClose();
+            const responseData = await response.json();
+            setAuthors(responseData.authors);
+        } catch (error) {
+            console.error('Error fetching authors:', error);
+        }
+    };
+
+    const handleSearchKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleAuthorSearch();
+        }
     };
 
     useEffect(() => {
-        console.log("FilterSidebar is open!"); // Log when the sidebar is opened
-    }, []);
+        const handleOutsideClick = (e) => {
+            if (!e.target.closest(".filter-drawer")) {
+                onClose();
+            }
+        };
 
-    // Event handlers for filter changes
-    const handleAuthorFilterChange = (event) => {
-        setAuthorFilter(event.target.value);
-    };
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape') {
+                onClose();
+            }
+        };
 
-    const handleCreationDateFilterChange = (event) => {
-        setCreationDateFilter(event.target.value);
-    };
+        document.addEventListener("mousedown", handleOutsideClick);
+        document.addEventListener("keydown", handleEscapeKey);
 
-    const handleTagFilterChange = (event) => {
-        setTagFilter(event.target.value);
-    };
-
-    const handleLanguageFilterChange = (event) => {
-        setLanguageFilter(event.target.value);
-    };
-
-    const handleStatusFilterChange = (event) => {
-        setStatusFilter(event.target.value);
-    };
-
-    const handleModelFilterChange = (event) => {
-        setModelFilter(event.target.value);
-    };
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+            document.removeEventListener("keydown", handleEscapeKey);
+        };
+    }, [onClose]);
 
     return (
-        <StyledDrawer variant="persistent" anchor="right" open={isFilterOpen} onClose={handleClose}>
-            <div className="root">
-                {/* Header with title and collapse button */}
-                <div className="navHeader">
-                    <Typography variant="h6">Filter</Typography>
-                    <button className="collapseArrow" onClick={handleClose}>
-                        {/* Custom collapsible arrow icon */}
-                        <CollapsableArrow rotationLeft="0" rotationRight="180" changeRotation={true} />
-                    </button>
+        <Drawer
+            variant="temporary"
+            anchor="right"
+            open={isOpen}
+            onClose={onClose}
+            className="filter-drawer"
+        >
+            <div style={styles.root}>
+                <div style={styles.header}>
+                    <Button
+                        onClick={onBackToSearch}
+                        style={styles.backButton}
+                    >
+                        ← Back to Search
+                    </Button>
                 </div>
-                <Divider />
-                <List>
-                    {/* Mapping through filter options */}
-                    {[
-                        { id: 'author-filter', label: 'Filter by Author', value: authorFilter, onChange: handleAuthorFilterChange },
-                        { id: 'creation-date-filter', label: 'Filter by Creation Date', value: creationDateFilter, onChange: handleCreationDateFilterChange },
-                        { id: 'tag-filter', label: 'Filter by Tag', value: tagFilter, onChange: handleTagFilterChange },
-                        { id: 'language-filter', label: 'Filter by Language', value: languageFilter, onChange: handleLanguageFilterChange }
-                    ].map(({ id, label, value, onChange }) => (
-                        <TextField
-                            key={id}
-                            style={{ margin: "10px 20px" }}
-                            id={id}
-                            label={label}
-                            value={value}
-                            onChange={onChange}
-                        />
-                    ))}
-                    {/* Dropdown for status filter */}
-                    <FormControl className="formControl">
-                        <InputLabel className="inputLabel" id="status-filter-label">Filter by Status</InputLabel>
-                        <Select
-                            className="select"
-                            labelId="status-filter-label"
-                            id="status-filter"
-                            value={statusFilter}
-                            onChange={handleStatusFilterChange}
-                            variant="outlined"
-                            fullWidth
-                        >
-                            <MenuItem value={"Active"}>Active</MenuItem>
-                            <MenuItem value={"Inactive"}>Inactive</MenuItem>
-                        </Select>
-                    </FormControl>
-                    {/* Dropdown for model filter */}
-                    <FormControl className="formControl">
-                        <InputLabel className="inputLabel" id="model-filter-label">Filter by Model</InputLabel>
-                        <Select
-                            className="select"
-                            labelId="model-filter-label"
-                            id="model-filter"
-                            value={modelFilter}
-                            onChange={handleModelFilterChange}
-                            variant="outlined"
-                            fullWidth
-                        >
-                            <MenuItem value={"Model A"}>Model A</MenuItem>
-                            <MenuItem value={"Model B"}>Model B</MenuItem>
-                            <MenuItem value={"Model C"}>Model C</MenuItem>
-                        </Select>
-                    </FormControl>
+                <div style={styles.divStyle}>
+                    <TextField
+                        style={styles.searchField}
+                        label="Filter by Author"
+                        type="search"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleSearchKeyDown}
+                    />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAuthorSearch}
+                        style={styles.searchButton}
+                    >
+                        Filter
+                    </Button>
+                </div>
+                <List style={styles.list}>
+                    {authors.length > 0 ? (
+                        authors.map((author, index) => (
+                            <Box key={index} style={styles.authorItem} onClick={() => onSelectAuthor(author)}>
+                                <Typography variant="body1">{author}</Typography>
+                            </Box>
+                        ))
+                    ) : (
+                        <Box sx={styles.noResults}>
+                            <Typography variant="body1" color="textSecondary">
+                                No authors found. Try another search.
+                            </Typography>
+                        </Box>
+                    )}
                 </List>
             </div>
-        </StyledDrawer>
+        </Drawer>
     );
 };
 
