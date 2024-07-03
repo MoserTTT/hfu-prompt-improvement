@@ -5,7 +5,6 @@ const styles = {
         backgroundColor: COLORS.white,
         overflowX: 'hidden',
         display: 'flex',
-        minHeight: '99vh',
         height: '100%'
     },
     

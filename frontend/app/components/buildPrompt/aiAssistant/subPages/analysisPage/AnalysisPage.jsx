@@ -1,17 +1,27 @@
-import { Box, Divider, Input, Tooltip } from "@mui/material";
+import { Box, Divider, Input, TextField, Tooltip } from "@mui/material";
 import styles from "./analysisPage.style";
-import { CheckIcon, CopyIcon, SpeakingUserIcon } from "../../../../../../assets/icons/components";
+import {
+  CheckIcon,
+  CopyIcon,
+  SpeakingUserIcon,
+} from "../../../../../../assets/icons/components";
 import COLORS from "../../../../../../styles/theme";
 import { useState, useEffect } from "react";
 import useStore from "../../../utils/markdownContentStore";
+import prompt_eval from "./utils/prompt_eval";
+import searchPrompt_name_and_id from "./utils/searchPrompt_name_and_id";
 
 const AnalysisPage = () => {
   // State variables to manage the prompt name and various responses
   const [promptName, setPromptName] = useState("");
-  const [question1, setQuestion1] = useState("What is the name of the prompt you want to analyze?");
+  const [question1, setQuestion1] = useState(
+    "What is the name of the prompt you want to analyze?"
+  );
   const [response1, setResponse1] = useState("");
-  const [response2, setResponse2] = useState("This prompt needs improvement.");
-  const [improvedPrompt, setImprovedPrompt] = useState("This is a dummy AI improved prompt.");
+  const [response2, setResponse2] = useState();
+  const [improvedPrompt, setImprovedPrompt] = useState(
+    "This is a dummy AI improved prompt."
+  );
   const [changesApplied, setChangesApplied] = useState(false);
   const [showAiAnswer, setShowAiAnswer] = useState(false);
   const [showImprovedPrompt, setShowImprovedPrompt] = useState(false);
@@ -21,12 +31,19 @@ const AnalysisPage = () => {
   // Retrieve state management functions from the store
   const markdownContent = useStore((state) => state.markdownContent);
   const setMarkdownContent = useStore((state) => state.setMarkdownContent);
-  const setDiffMarkdownContent = useStore((state) => state.setDiffMarkdownContent);
+  const setDiffMarkdownContent = useStore(
+    (state) => state.setDiffMarkdownContent
+  );
+
+  var prompt_name_and_id = "";
 
   // Handle Enter key press to trigger prompt analysis
-  const handleKeyDown = (e) => {
+  const handleKeyDown = async (e) => {
     if (e.keyCode === 13 && promptName.trim() !== "") {
-      setResponse1(`Analyzing prompt: ${promptName}`);
+      prompt_name_and_id = await searchPrompt_name_and_id(promptName);
+      setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
+
+      setResponse2(await prompt_eval(prompt_name_and_id));
     }
   };
 
@@ -38,8 +55,8 @@ const AnalysisPage = () => {
         setAnimatedResponse1(response1.slice(0, index + 1));
         index++;
         if (index === response1.length) {
-          clearInterval(timer);
           setShowAiAnswer(true); // Show the AI's next response after animation
+          clearInterval(timer);
         }
       }, 50);
       return () => clearInterval(timer);
@@ -48,10 +65,14 @@ const AnalysisPage = () => {
 
   // Effect to animate the AI's suggestion for improved prompt character-by-character
   useEffect(() => {
+    console.log(response2);
+    console.log(showAiAnswer);
     if (showAiAnswer) {
       let index = 0;
       const timer = setInterval(() => {
-        setAnimatedResponse2(response2.slice(0, index + 1));
+        setAnimatedResponse2(
+          response2.slice(0, index + 1).replace(/\n/g, "<br>")
+        );
         index++;
         if (index === response2.length) {
           clearInterval(timer);
@@ -60,10 +81,10 @@ const AnalysisPage = () => {
       }, 50);
       return () => clearInterval(timer);
     }
-  }, [showAiAnswer]);
+  }, [response2]);
 
   // Handle apply changes button click
-  const handleApplyChangesClick = () => {
+  const handleApplyChangesClick = async () => {
     if (!changesApplied) {
       setChangesApplied(true);
       setDiffMarkdownContent(markdownContent);
@@ -124,7 +145,7 @@ const AnalysisPage = () => {
             </div>
           )
         }
-        
+
         {
           // Step 3: Improved Prompt Suggestion
           showAiAnswer && (
@@ -135,7 +156,9 @@ const AnalysisPage = () => {
                   src="../../../../assets/icons/organicAI_Icon.gif"
                   alt="AI Icon"
                 />
-                <p style={styles.aiQuestionText}>{animatedResponse2}</p>
+                <p style={styles.aiQuestionText}>
+                  { animatedResponse2 }
+                </p>
               </div>
               {showImprovedPrompt && (
                 <div style={styles.aiImprovedPromptDiv}>

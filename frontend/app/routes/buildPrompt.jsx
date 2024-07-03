@@ -28,7 +28,7 @@ export default function buildPrompt() {
           // Set DragAndDrop state to true
           setDnD(true);
         }
-        document.body.style.overflow = 'scroll';
+        document.body.style.overflow = 'auto';
         document.getElementsByClassName("css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop")[0].style.opacity = 1;
         document.getElementsByClassName("css-1160xiw-MuiPaper-root-MuiDrawer-paper")[0].style.opacity = 1;
         movedPixel_cnt = 0;

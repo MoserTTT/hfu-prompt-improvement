@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as MDX from "@mdxeditor/editor";
 import "@mdxeditor/editor/style.css";
+
 import { useDroppable } from "@dnd-kit/core";
 import styles from "./styles/textPromptArea.style";
 import useStore from "../utils/markdownContentStore";
@@ -91,10 +92,20 @@ const TextPromptArea = () => {
           }),
           MDX.codeBlockPlugin({ defaultCodeBlockLanguage: "js" }),
           MDX.codeMirrorPlugin({
-            codeBlockLanguages: { js: "JavaScript", css: "CSS" },
+            codeBlockLanguages: {
+              rich: 'Rich text',
+              md: 'markdown',
+              js: "JavaScript",
+              jsx: "jsx",
+              css: "CSS",
+              python: "Python",
+              html: 'HTML',
+              json: 'JSON',
+            },
           }),
           MDX.headingsPlugin(),
           MDX.listsPlugin(),
+          MDX.linkPlugin(),
           MDX.quotePlugin(),
           MDX.thematicBreakPlugin(),
           MDX.markdownShortcutPlugin(),
