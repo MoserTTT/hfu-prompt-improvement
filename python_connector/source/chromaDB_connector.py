@@ -37,8 +37,8 @@ class chromaDB_connector:
         self.allowed_metadata_keys = [
             "name", "description", "author", "models", "tags", "languages", "ratings", "comments", "version"]
 
-        self.__last_failure_time = None
-        self.__cooldown = 20
+        self.__cooldown = 200
+        
         # getting the client
         try:
             self.__get_client()
@@ -51,6 +51,7 @@ class chromaDB_connector:
 
         This step might have to be redone depending on chroma service availability
         """
+        self.__last_attempt_time = time.time()
         try:
             self.__client = chromadb.HttpClient(host='chroma', port=8000)
             # getting or creating the collection
@@ -59,7 +60,6 @@ class chromaDB_connector:
 
         except Exception as e:
             self.__client = None
-            self.__last_failure_time = time.time()
             raise ConnectionError(
                 "Could not connect to Chroma Service. Further Info: " + repr(e))
 
@@ -74,11 +74,12 @@ class chromaDB_connector:
 
     def __ensure_client_available(self):
         if not self.__is_client_reachable():
-            if self.__last_failure_time and time.time() - self.__last_failure_time > self.__cooldown:
+            expired_cooldown = int(time.time()) - int(self.__last_attempt_time)
+            if  expired_cooldown > self.__cooldown:
                 self.__get_client()
             else:
                 raise ConnectionError(
-                    "Did not attempt to connect to client: remaining Cooldown")
+                    "Did not attempt to connect to client: remaining Cooldown  "+ repr(expired_cooldown))
 
     def create_prompt(self, prompt: str, metadata: dict):
         """
