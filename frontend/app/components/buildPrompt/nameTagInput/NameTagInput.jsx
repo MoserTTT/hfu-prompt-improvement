@@ -84,7 +84,7 @@ const NameTagInput = () => {
           case 'save':
               //console.log('String ist "s". Führe Aktion für "s" aus.');
               // Aktion für "s" message saved succesfully, do save
-              //createPrompt;
+              createPrompt;
               oldContent=markdownContent;
               toast.success('Saved successfully!');
               //Titel box leeren
