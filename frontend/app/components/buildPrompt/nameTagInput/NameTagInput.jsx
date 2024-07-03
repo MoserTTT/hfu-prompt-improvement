@@ -6,6 +6,8 @@ import COLORS from "../../../../styles/theme";
 import SaveButton from "../../buttons/SaveButton";
 import transformMarkdownContent from "./assets/transformMarkdownContent";
 import useStore from "../utils/markdownContentStore";
+import toast, { Toaster } from 'react-hot-toast';
+import './style.css'; // Ihre CSS-Datei importieren
 
 const NameTagInput = () => {
   const [addIconColor, setAddIconColor] = useState(COLORS.gray);
@@ -17,6 +19,9 @@ const NameTagInput = () => {
   const handleHover = (event) => {
     setAddIconColor(event.type === "mouseenter" ? COLORS.blue : COLORS.gray);
   };
+
+  
+  var oldContent = "";
 
   const handleDeleteTag = (tagToDelete) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
@@ -69,9 +74,105 @@ const NameTagInput = () => {
 
   }
 
+  //const notify = () => {
+    //if
+    //toast.success('Saved successfully!')};
+
+
+    function handleValidate() {
+      switch (validate()) {
+          case 'save':
+              //console.log('String ist "s". Führe Aktion für "s" aus.');
+              // Aktion für "s" message saved succesfully, do save
+              //createPrompt;
+              oldContent=markdownContent;
+              toast.success('Saved successfully!');
+              //Titel box leeren
+              document.getElementById("nameInput").value = null;
+              break;
+
+          case 'etitle':
+              //console.log('String ist "e". Führe Aktion für "e" aus.');
+              // Aktion für "e" message error, do not save
+              toast.error('Error! The title must be set!')
+              break;
+
+          case 'echanged':
+              //console.log('String ist "ec". Führe Aktion für "ec" aus.');
+              // Aktion für "ec" message error nix geändert, do not save
+              toast.error('Error! The promt has not been edited!')
+              break;
+
+          case 'etag':
+            //console.log('String ist "ec". Führe Aktion für "ec" aus.');
+            // Aktion für "ec" message error unvollständig, do not save
+            toast.error('Errror! At least one tag must be set!')
+            break;
+
+          default:
+              //console.log('String ist unbekannt. Führe Standardaktion aus.');
+              // Standardaktion für unbekannte Strings message error standart
+              toast.error('Error!')
+      }
+    };
+    
+
+
+    function validate(){
+    
+      if (document.getElementById("nameInput").value != ""){ // Titel prüfen ob leer
+        if (tags.length!=0){    //schaun ob min 1 tag gesetzt
+          if(oldContent!=markdownContent && markdownContent!="# Hello World"){ //schaun ob was geändert wurde
+              return 'save'
+            }
+            return 'echanged'
+          }
+          return 'etag'
+        }
+        return 'etitle'
+      
+    };
+
   return (
     <div>
       <div style={styles.upperSection}>
+
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+        // Define default options
+        className: 'toast-container',
+        duration: 5000,
+        style: {
+          background: COLORS.white,
+          color: COLORS.black,
+        },
+
+        // Default options for specific types
+        success: {
+          duration: 3000,
+          theme: {
+            primary: 'green',
+            secondary: 'white',
+          },
+        },
+
+        error: {
+          duration: 3000,
+          theme: {
+            primary: 'red',
+            secondary: 'white',
+          },
+        },
+
+
+        }}
+      />
+
         <TextField
           autoFocus
           id="nameInput"
@@ -96,7 +197,7 @@ const NameTagInput = () => {
         >
           <AddIcon color={addIconColor} />
         </button>
-        <SaveButton name="Save" onClick={createPrompt} />
+        <SaveButton name="Save" onClick={handleValidate} />
         <SaveButton name="Save as draft" onClick={createPromptDraft} />
       </div>
       <Stack direction="row" spacing={1}>
