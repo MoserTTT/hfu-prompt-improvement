@@ -1,54 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { Drawer, List, Box, TextField, Typography, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Drawer, Typography, Button, TextField } from "@mui/material";
 import styles from "./styles/filterSidebar.style";
 import COLORS from "../../../../styles/theme";
 
-const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSelectAuthor }) => {
-    const [authors, setAuthors] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
+const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSearch }) => {
+    const [tagSearch, setTagSearch] = useState("");
+    const [authorSearch, setAuthorSearch] = useState("");
+    const [nameSearch, setNameSearch] = useState("");
 
-    const handleAuthorSearch = async () => {
-        const url = `http://127.0.0.1:5000/authors?searchTerm=${encodeURIComponent(searchTerm)}`;
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to fetch authors');
-            }
-
-            const responseData = await response.json();
-            setAuthors(responseData.authors);
-        } catch (error) {
-            console.error('Error fetching authors:', error);
-        }
+    const handleTagChange = (e) => {
+        setTagSearch(e.target.value);
     };
 
-    const handleSearchKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleAuthorSearch();
-        }
+    const handleAuthorChange = (e) => {
+        setAuthorSearch(e.target.value);
     };
 
-    useEffect(() => {
-        const handleOutsideClick = (e) => {
-            if (!e.target.closest(".filter-drawer")) {
-                onClose();
-            }
+    const handleNameChange = (e) => {
+        setNameSearch(e.target.value);
+    };
+
+    const handleSearch = () => {
+        const filterCriteria = {
+            tags: tagSearch,
+            author: authorSearch,
+            name: nameSearch
         };
 
-        const handleEscapeKey = (e) => {
-            if (e.key === 'Escape') {
-                onClose();
-            }
-        };
-
-        document.addEventListener("mousedown", handleOutsideClick);
-        document.addEventListener("keydown", handleEscapeKey);
-
-        return () => {
-            document.removeEventListener("mousedown", handleOutsideClick);
-            document.removeEventListener("keydown", handleEscapeKey);
-        };
-    }, [onClose]);
+        if (typeof onSearch === 'function') {
+            onSearch(filterCriteria);
+            onClose();
+        }
+    };
 
     return (
         <Drawer
@@ -68,38 +51,57 @@ const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSelectAuthor }) => {
                     </Button>
                 </div>
                 <div style={styles.divStyle}>
+                    <Typography variant="body1" gutterBottom>
+                        Filter by Tag:
+                    </Typography>
                     <TextField
-                        style={styles.searchField}
-                        label="Filter by Author"
-                        type="search"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={handleSearchKeyDown}
+                        id="tag"
+                        label="Enter Tag"
+                        variant="outlined"
+                        value={tagSearch}
+                        onChange={handleTagChange}
+                        fullWidth
+                        style={styles.tagField}
                     />
+
+                    <Typography variant="body1" gutterBottom>
+                        Filter by Author:
+                    </Typography>
+                    <TextField
+                        id="author"
+                        label="Enter Author"
+                        variant="outlined"
+                        value={authorSearch}
+                        onChange={handleAuthorChange}
+                        fullWidth
+                        style={styles.tagField}
+                    />
+
+                    <Typography variant="body1" gutterBottom>
+                        Filter by Name:
+                    </Typography>
+                    <TextField
+                        id="name"
+                        label="Enter Name"
+                        variant="outlined"
+                        value={nameSearch}
+                        onChange={handleNameChange}
+                        fullWidth
+                        style={styles.tagField}
+                    />
+
                     <Button
                         variant="contained"
-                        color="primary"
-                        onClick={handleAuthorSearch}
+                        onClick={handleSearch}
                         style={styles.searchButton}
                     >
-                        Filter
+                        Search
                     </Button>
+
+                    <Typography variant="body2" color="textSecondary" style={{ marginTop: "8px" }}>
+                        Filters must be exact matches.
+                    </Typography>
                 </div>
-                <List style={styles.list}>
-                    {authors.length > 0 ? (
-                        authors.map((author, index) => (
-                            <Box key={index} style={styles.authorItem} onClick={() => onSelectAuthor(author)}>
-                                <Typography variant="body1">{author}</Typography>
-                            </Box>
-                        ))
-                    ) : (
-                        <Box sx={styles.noResults}>
-                            <Typography variant="body1" color="textSecondary">
-                                No authors found. Try another search.
-                            </Typography>
-                        </Box>
-                    )}
-                </List>
             </div>
         </Drawer>
     );
