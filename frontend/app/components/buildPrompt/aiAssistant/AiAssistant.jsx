@@ -18,8 +18,10 @@ const AiAssistant = () => {
     }
 
     const closeAssistant = () => {
-        setPageSelector("welcomePage");
+        
         setAssistantOpen(false);
+        
+        setPageSelector("welcomePage");
     }
 
     return (
@@ -34,13 +36,17 @@ const AiAssistant = () => {
                             pageSelector == "welcomePage" && 
                                 <WelcomePage
                                     onClickAnalysis={() => setPageSelector("analysisPage")}
-                                    onClickRun={() => setPageSelector("runPage")} />
-
+                                    onClickRun={() => setPageSelector("runPage")} 
+                                    onCloseWindow={()=> setAssistantOpen(false)} />
                             || pageSelector == "analysisPage" && 
-                                <AnalysisPage/>
+                                <AnalysisPage
+                                    onCloseWindow={()=> closeAssistant()}
+                                />
 
                             || pageSelector == "runPage" &&
-                                <RunPage/>
+                                <RunPage
+                                onCloseWindow={()=> closeAssistant()}
+                                />
                         }
                     </Box>
                 </Fade>

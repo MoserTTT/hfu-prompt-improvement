@@ -1,20 +1,36 @@
 import { Box } from "@mui/material";
 import styles from "./welcomePage.style";
 import { useState } from "react";
+import AssistantCloseIcon from "../../../../../../assets/icons/components/AssistantCloseIcon";
+import COLORS from "../../../../../../styles/theme";
 
-const WelcomePage = ({ onClickAnalysis, onClickRun }) => {
+const WelcomePage = ({ onClickAnalysis, onClickRun, onCloseWindow }) => {
 
     // states for hover effect
     const [isButtonAnalysisHovered, setIsButtonAnalysisHovered] = useState(false);
     const [isButtonRunHovered, setIsButtonRunHovered] = useState(false);
+    const [iconColor, setIconColor] = useState(COLORS.white);
+    
 
     return(
         <Box sx={ styles.modalBox }>
+
+            
+
             <img style={ styles.aiImage } src="../../../../assets/icons/organicAI_Icon.gif" />
             
             <p style={ styles.headerText }>
                 Your personal <span style={ styles.headerTextAfter }>AI assistant</span>
             </p>
+
+            <button
+                style={styles.closeButton}
+                onClick={onCloseWindow}
+                onMouseEnter={() => setIconColor(COLORS.gray)}
+                onMouseLeave={() => setIconColor(COLORS.white)}
+            >
+                <AssistantCloseIcon color={iconColor} />
+            </button>
 
             <div style={ styles.buttonDiv }>
                 <button

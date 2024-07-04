@@ -71,7 +71,7 @@ const NameTagInput = () => {
   };
 
   const createPromptDraft = () => {
-
+    toast.error('This function is currently not available!')
   }
 
   //const notify = () => {
@@ -84,7 +84,7 @@ const NameTagInput = () => {
           case 'save':
               //console.log('String ist "s". Führe Aktion für "s" aus.');
               // Aktion für "s" message saved succesfully, do save
-              createPrompt;
+              createPrompt();
               oldContent=markdownContent;
               toast.success('Saved successfully!');
               //Titel box leeren
@@ -106,7 +106,7 @@ const NameTagInput = () => {
           case 'etag':
             //console.log('String ist "ec". Führe Aktion für "ec" aus.');
             // Aktion für "ec" message error unvollständig, do not save
-            toast.error('Errror! At least one tag must be set!')
+            toast.error('Error! At least one tag must be set!')
             break;
 
           default:

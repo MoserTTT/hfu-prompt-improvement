@@ -148,7 +148,19 @@ const styles = {
     aiImprovedPromptText: {
         ...FONTS.bodyMedium,
         color: COLORS.white
-    }
+    },
+
+    closeButton: {
+        position: 'absolute',
+        top: '15px', /* Abstand vom oberen Rand */
+        right: '10px', /* Abstand vom rechten Rand */
+        background: "none", // Transparent background
+        border: 2, // No border
+        justifyContent: "center", // Centered content
+        alignItems: "center", // Centered items
+        width: "fit-content", // Width based on content
+        margin: '0px 0px 0px 0px', // Margin
+    },
 };
 
 export default styles;

@@ -3,13 +3,16 @@ import styles from "./runPage.style";
 import transformMarkdownContent from "../../../nameTagInput/assets/transformMarkdownContent";
 import { useState, useEffect, useRef } from "react";
 import useStore from "../../../utils/markdownContentStore";
+import AssistantCloseIcon from "../../../../../../assets/icons/components/AssistantCloseIcon";
+import COLORS from "../../../../../../styles/theme";
 
-const RunPage = () => {
+const RunPage = ({onCloseWindow}) => {
   const markdownContent = useStore((state) => state.markdownContent);
   const calledLLM = useRef(false); // Use useRef to store the calledLLM flag
 
   const [responseText, setResponseText] = useState("");
   const [animatedText, setAnimatedText] = useState("");
+  const [iconColor, setIconColor] = useState(COLORS.white);
 
   const callLLM = async () => {
     if (calledLLM.current) return; // Prevent multiple calls
@@ -64,6 +67,16 @@ const RunPage = () => {
   return (
     <Box sx={ styles.modalBox }>
       <p style={ styles.heading }>Run Prompt</p>
+
+      <button
+                style={styles.closeButton}
+                onClick={onCloseWindow}
+                onMouseEnter={() => setIconColor(COLORS.gray)}
+                onMouseLeave={() => setIconColor(COLORS.white)}
+            >
+                <AssistantCloseIcon color={iconColor} />
+            </button>
+
       <Divider style={ styles.divider } orientation="horizontal" />
       <div style={ styles.promptNameDiv }>
         <p style={ styles.promptName }>

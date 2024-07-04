@@ -38,6 +38,7 @@ const styles = {
         margin: '30px 20px 20px 0px', // Margin
     },
 
+
     divStyle: {
         display: "flex", // Flexbox container
         justifyContent: 'space-between', // Space evenly between items

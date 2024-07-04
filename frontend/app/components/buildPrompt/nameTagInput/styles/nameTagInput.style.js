@@ -20,7 +20,8 @@ const styles = {
 
     addButton: {
         border: 'none',
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        marginTop: 18
     },
 
     tags: {

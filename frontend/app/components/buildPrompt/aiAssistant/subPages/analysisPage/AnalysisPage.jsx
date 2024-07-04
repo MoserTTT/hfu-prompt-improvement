@@ -4,8 +4,9 @@ import { CheckIcon, CopyIcon, SpeakingUserIcon } from "../../../../../../assets/
 import COLORS from "../../../../../../styles/theme";
 import { useState, useEffect } from "react";
 import useStore from "../../../utils/markdownContentStore";
+import AssistantCloseIcon from "../../../../../../assets/icons/components/AssistantCloseIcon";
 
-const AnalysisPage = () => {
+const AnalysisPage = ({onCloseWindow}) => {
   // State variables to manage the prompt name and various responses
   const [promptName, setPromptName] = useState("");
   const [question1, setQuestion1] = useState("What is the name of the prompt you want to analyze?");
@@ -17,6 +18,7 @@ const AnalysisPage = () => {
   const [showImprovedPrompt, setShowImprovedPrompt] = useState(false);
   const [animatedResponse1, setAnimatedResponse1] = useState("");
   const [animatedResponse2, setAnimatedResponse2] = useState("");
+  const [iconColor, setIconColor] = useState(COLORS.white);
 
   // Retrieve state management functions from the store
   const markdownContent = useStore((state) => state.markdownContent);
@@ -76,10 +78,20 @@ const AnalysisPage = () => {
     setPromptName(e.target.value);
   };
 
+ 
   return (
     <Box sx={styles.modalBox}>
       <p style={styles.heading}>Analyze Prompt</p>
       <Divider style={styles.divider} orientation="horizontal" />
+
+      <button
+                style={styles.closeButton}
+                onClick={onCloseWindow}
+                onMouseEnter={() => setIconColor(COLORS.gray)}
+                onMouseLeave={() => setIconColor(COLORS.white)}
+            >
+                <AssistantCloseIcon color={iconColor} />
+            </button>
 
       <div style={styles.dialogDiv}>
         {
