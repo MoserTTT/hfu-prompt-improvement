@@ -29,7 +29,14 @@ const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSearch }) => {
 
         if (typeof onSearch === 'function') {
             onSearch(filterCriteria);
-            onClose();
+            onClose(); // Schließe die Filter-Sidebar nach der Suche
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Verhindere das Standardverhalten des Formulars
+            handleSearch();
         }
     };
 
@@ -60,6 +67,7 @@ const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSearch }) => {
                         variant="outlined"
                         value={tagSearch}
                         onChange={handleTagChange}
+                        onKeyDown={handleKeyDown}
                         fullWidth
                         style={styles.tagField}
                     />
@@ -73,6 +81,7 @@ const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSearch }) => {
                         variant="outlined"
                         value={authorSearch}
                         onChange={handleAuthorChange}
+                        onKeyDown={handleKeyDown}
                         fullWidth
                         style={styles.tagField}
                     />
@@ -86,6 +95,7 @@ const FilterSidebar = ({ isOpen, onClose, onBackToSearch, onSearch }) => {
                         variant="outlined"
                         value={nameSearch}
                         onChange={handleNameChange}
+                        onKeyDown={handleKeyDown}
                         fullWidth
                         style={styles.tagField}
                     />

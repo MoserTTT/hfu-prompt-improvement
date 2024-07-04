@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, List, Box, TextField, Typography, Button } from "@mui/material";
+import { Drawer, List, Box, TextField, Typography, Button, Snackbar, Alert } from "@mui/material";
 import styles from "./styles/searchSidebar.style";
 import COLORS from "../../../../styles/theme";
 import FilterIcon from "../../../../assets/icons/components/FilterIcon";
@@ -14,6 +14,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState(""); // Zustand für den Suchbegriff hinzufügen
     const [filterCriteria, setFilterCriteria] = useState(null); // Zustand für den Filter hinzufügen
+    const [snackbarOpen, setSnackbarOpen] = useState(false); // Zustand für Snackbar hinzufügen
 
     // Handler für das Öffnen und Schließen des Filters
     const handleToggleFilter = () => {
@@ -22,6 +23,11 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
 
     // Handler für die Suche mit dem aktuellen Filter
     const handleSearch = async () => {
+        if (!searchTerm) {
+            setSnackbarOpen(true);
+            return;
+        }
+
         setLoading(true);
         const query = encodeURIComponent(searchTerm);
         const top_n = encodeURIComponent(15);
@@ -52,7 +58,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
             }
 
             let filterParameter = encodeURIComponent(JSON.stringify(filter));
-            url += `&filter=${filterParameter}`;
+            url += `&filter=${filterParameter}`; // Korrekte Formatierung für den Filter hinzufügen
         }
 
         try {
@@ -87,6 +93,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
         }
 
         setLoading(false);
+        setSnackbarOpen(false); // Snackbar schließen, wenn die Suche ausgeführt wurde
     };
 
     // Handler für die Eingabe im Suchfeld
@@ -181,6 +188,17 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
                     )}
                 </List>
             </Drawer>
+
+            {/* Snackbar für die Benachrichtigung */}
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={6000}
+                onClose={() => setSnackbarOpen(false)}
+            >
+                <Alert onClose={() => setSnackbarOpen(false)} severity="warning" sx={{ width: '100%' }}>
+                    Please enter a search term.
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
