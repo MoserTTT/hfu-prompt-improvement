@@ -102,7 +102,7 @@ class main:
                 unexpected_error = repr(unexpected_error)
                 return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
         
-        @self.app.route("/prompt_eval", methods=["GET"])    
+        @self.app.route("/prompt_eval", methods=["POST"])    
         def call_eval_prompt_by_LLM():
             data = request.get_json()
             if not data or "prompt_name_and_id" not in data:
@@ -115,7 +115,7 @@ class main:
                 unexpected_error = repr(unexpected_error)
                 return jsonify({"error":f"Unexpected Error: {unexpected_error}"}), 500
         
-        @self.app.route("/prompt_improve", methods=["GET"])    
+        @self.app.route("/prompt_improve", methods=["POST"])    
         def call_improve_prompt():
             data = request.get_json()
             if not data or "prompt_name_and_id" not in data:
