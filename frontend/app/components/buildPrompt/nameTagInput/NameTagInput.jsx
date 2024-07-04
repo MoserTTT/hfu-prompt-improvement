@@ -109,29 +109,60 @@ const NameTagInput = () => {
             toast.error('Error! At least one tag must be set!')
             break;
 
+          case 'etitlelength':
+            //console.log('String ist "ec". Führe Aktion für "ec" aus.');
+            // Aktion für "ec" message error unvollständig, do not save
+            toast.error('Error! Minimum title length is 5!')
+            break;
+
+            case 'etitlechars':
+          //console.log('String ist "ec". Führe Aktion für "ec" aus.');
+          // Aktion für "ec" message error unvollständig, do not save
+          toast.error('Error! Title must be alphanumeric!')
+          break;
+
           default:
               //console.log('String ist unbekannt. Führe Standardaktion aus.');
               // Standardaktion für unbekannte Strings message error standart
               toast.error('Error!')
       }
     };
+
+    function isAlphaNumeric(str) {
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (!(/[a-zA-Z0-9]/).test(char)) {
+          return false; // Wenn ein nicht-alphanumerisches Zeichen gefunden wird
+        }
+      }
+      return true; // Wenn alle Zeichen alphanumerisch sind
+    };
+    
     
 
 
     function validate(){
     
       if (document.getElementById("nameInput").value != ""){ // Titel prüfen ob leer
-        if (tags.length!=0){    //schaun ob min 1 tag gesetzt
-          if(oldContent!=markdownContent && markdownContent!="# Hello World"){ //schaun ob was geändert wurde
-              return 'save'
+        if(document.getElementById("nameInput").value.length>=5){
+          if(isAlphaNumeric(document.getElementById("nameInput").value)){
+            if (tags.length!=0){    //schaun ob min 1 tag gesetzt
+              if(oldContent!=markdownContent && markdownContent!="# Hello World"){ //schaun ob was geändert wurde
+                  return 'save'
+                }
+                return 'echanged'
+              }
+              return 'etag'
             }
-            return 'echanged'
+            return 'etitlechars'
           }
-          return 'etag'
-        }
+          return 'etitlelength'
+        } 
         return 'etitle'
       
     };
+
+    
 
   return (
     <div>

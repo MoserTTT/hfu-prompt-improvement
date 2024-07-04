@@ -204,6 +204,7 @@ const styles = {
         alignItems: "center", // Centered items
         width: "fit-content", // Width based on content
         margin: '0px 0px 0px 0px', // Margin
+        cursor:'pointer',
     },
 };
 
