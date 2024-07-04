@@ -1,5 +1,4 @@
 const searchPrompt_name_and_id = async (name) => {
-    console.log("searchByVector...");
     const query = encodeURIComponent(name);
     const url = `http://127.0.0.1:5000/prompt_by_vector?query=${query}`;
   
@@ -11,7 +10,6 @@ const searchPrompt_name_and_id = async (name) => {
       }
   
       const responseData = await response.json();
-      console.log(responseData.ids[0][0]);
       return responseData.ids[0][0];
     } catch (error) {
       console.error("Error searching by vector:", error);

@@ -10,6 +10,33 @@ const styles = {
         textAlign: 'center',
         overflowY: 'auto',
 
+        '::-webkit-scrollbar': {
+            width: '12px',
+        },
+
+        '::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent', // Transparent background
+        },
+
+        '::-webkit-scrollbar-thumb': {
+            backgroundColor: COLORS.darkGray, // Thumb color
+            borderRadius: '6px',
+        },
+
+        '::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: COLORS.gray, // Thumb hover color
+        },
+
+        '::-webkit-scrollbar-track-piece:end': {
+            background: 'transparent',
+            marginBottom: '10px'
+        },
+        
+        '::-webkit-scrollbar-track-piece:start': {
+            background: 'transparent',
+            marginTop: '10px'
+        },
+
         width: '70%',
         height: '70%',
         padding: '30px',
@@ -42,7 +69,6 @@ const styles = {
 
     innerAiQuestion: {
         display: 'flex',
-        flex: 1,
         alignItems: 'center',
         marginBottom: '12px',
         marginTop: '20px'
@@ -55,21 +81,22 @@ const styles = {
         marginRight: '8px',
     },
 
-    aiQuestionText: {
+    aiText: {
         ...FONTS.bodyLarge,
         color: COLORS.white,
-        padding: '10px',
         borderRadius: '10px',
-        maxWidth: '80%',
+        maxWidth: '89%',
         textAlign: 'left',
-        wordWrap: 'break-word'
+        padding: 0,
+        marginTop: '10px'
     },
 
     responseOnFirstQuestion: {
         flex: '1',
         display: 'flex',
         flexDirection: 'column',
-        float: 'right'
+        float: 'right',
+        width: 'fit-content'
     },
 
     innerResponseOnFirstQuestion: {
@@ -103,6 +130,22 @@ const styles = {
         ...FONTS.headlineSmall,
         color: COLORS.white,
         margin: 0
+    },
+
+    aiAnswer: {
+        marginTop: '50px',
+        flex: '1',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowY: 'auto',
+        height: '90%'
+    },
+
+    innerAiAnswer: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        marginBottom: '12px',
+        marginTop: '20px',
     },
 
     aiImprovedPromptDiv: {

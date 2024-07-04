@@ -1,5 +1,4 @@
 const prompt_eval = async (prompt_name_and_id) => {
-  console.log("prompt_eval...");
   const data = { prompt_name_and_id: prompt_name_and_id }; // Create a data object with the prompt
 
   try {

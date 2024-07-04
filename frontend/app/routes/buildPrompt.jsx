@@ -41,7 +41,6 @@ export default function buildPrompt() {
 
     const handleDragMove = () => {
       movedPixel_cnt++;
-      console.log(movedPixel_cnt);
       if(movedPixel_cnt > 20){
         document.getElementsByClassName("css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop")[0].style.opacity = 0;
         document.getElementsByClassName("css-1160xiw-MuiPaper-root-MuiDrawer-paper")[0].style.opacity = 0;

@@ -15,7 +15,6 @@ const RunPage = () => {
     if (calledLLM.current) return; // Prevent multiple calls
     calledLLM.current = true;
 
-    console.log("call llm...");
     const prompt = encodeURIComponent(
       transformMarkdownContent(markdownContent)
     );
