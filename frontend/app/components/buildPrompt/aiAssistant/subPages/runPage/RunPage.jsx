@@ -3,6 +3,8 @@ import styles from "./runPage.style";
 import transformMarkdownContent from "../../../nameTagInput/assets/transformMarkdownContent";
 import { useState, useEffect, useRef } from "react";
 import useStore from "../../../utils/markdownContentStore";
+import Markdown from 'react-markdown'
+import LoadingSkeletonRun from "./utils/loadingSkeletonRun/LoadingSkeletonRun";
 
 const RunPage = () => {
   const markdownContent = useStore((state) => state.markdownContent);
@@ -10,10 +12,12 @@ const RunPage = () => {
 
   const [responseText, setResponseText] = useState("");
   const [animatedText, setAnimatedText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const callLLM = async () => {
     if (calledLLM.current) return; // Prevent multiple calls
     calledLLM.current = true;
+    setIsLoading(true);
 
     const prompt = encodeURIComponent(
       transformMarkdownContent(markdownContent)
@@ -39,6 +43,7 @@ const RunPage = () => {
     } catch (error) {
       console.error("Error searching by metadata:", error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -75,7 +80,17 @@ const RunPage = () => {
             style={ styles.aiImage }
             src="../../../../assets/icons/organicAI_Icon.gif"
           />
-          <p style={ styles.responseText }>{ animatedText }</p>
+          {
+            isLoading ? (
+              <LoadingSkeletonRun/>
+            ) : (
+              <div style={ styles.responseText }>
+                <Markdown>
+                  { animatedText }
+                </Markdown>
+              </div>
+            )
+          }
         </div>
       </div>
     </Box>
