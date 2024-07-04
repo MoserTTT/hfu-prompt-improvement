@@ -3,6 +3,7 @@ import requests
 import json
 import logging
 import re
+import string
 
 # Configure the logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -44,7 +45,7 @@ class AzureOpenAIHandler:
         self.create_prompt_url = "http://localhost:5000/set_prompt"
         self.eval_templates = {
             "structure":
-            """Your task is to evaluate the structure of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
+            """Your task is to evaluate the structure of a given prompt based on specific criteria. Answer within 500 tokens. Please score the prompt on a scale from 0 to 5, where each score represents the following:
 
 - **0:** The prompt is completely unclear, lacks coherence, and provides no useful guidance.
 - **1:** The prompt is mostly unclear and confusing, with very little useful guidance.
@@ -70,7 +71,7 @@ Prompt to be evaluated: {prompt}
 **Evaluation:**
 score: """,
             "clarity":
-            """Your task is to evaluate the clarity of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
+            """Your task is to evaluate the clarity of a given prompt based on specific criteria. Answer within 500 tokens. Please score the prompt on a scale from 0 to 5, where each score represents the following:
 
 - **0:** The prompt is completely unclear, highly ambiguous, and lacks any specific details.
 - **1:** The prompt is mostly unclear and ambiguous, providing very little specific guidance.
@@ -97,7 +98,7 @@ Prompt to be evaluated: {prompt}
 **Evaluation:**
 score: """,
             "completeness":
-            """Your task is to evaluate the completeness of a given prompt based on specific criteria. Please score the prompt on a scale from 0 to 5, where each score represents the following:
+            """Your task is to evaluate the completeness of a given prompt based on specific criteria. Answer within 500 tokens. Please score the prompt on a scale from 0 to 5, where each score represents the following:
 
 - **0:** The prompt is completely incomplete, lacks necessary background information, scope, and clarity.
 - **1:** The prompt is mostly incomplete, with very little background information or scope covered.
@@ -173,7 +174,7 @@ Improved prompt: """
             logger.error("Failed to get response. Status code:", response.status_code)
         return response
 
-    def call_LLM(self, prompt: str, system_prompt: str = None, max_tokens: int = 500) -> str:
+    def call_LLM(self, prompt: str, system_prompt: str = None, max_tokens: int = 4000) -> str:
         """
         Calls the LLM to generate a response based on the provided prompt.
 
@@ -223,7 +224,7 @@ Improved prompt: """
             # Compile the eval prompt and run it
             compiled_prompt = self.__compile_prompt(
                 template=self.eval_templates[metric], prompt=prompt_to_eval)
-            response = self.call_LLM(prompt=compiled_prompt)
+            response = self.call_LLM(prompt=compiled_prompt, max_tokens=500)
 
             # Check if syntax of the response is correct
             if "advice:" not in response:
@@ -232,9 +233,19 @@ Improved prompt: """
 
             # Add the results to scores
             response_split = re.split(r'[aA]dvice:', response)
+            score = re.split(r'[sS]core:', response_split[0])[-1]
             scores.append(metric)   # metric name
-            scores.append(response_split[0].strip())    # score
-            scores.append(response_split[1].strip()[:499])  # advice
+            
+            printable = set(string.printable)
+            
+            score = ''.join([char for char in score.strip()[:999] if char in printable])
+            score = score.replace('\n', '')
+            scores.append(score)
+            
+            advice = ''.join([char for char in response_split[1].strip()[:999] if char in printable])
+            advice = advice.replace('\n', '')
+            scores.append(advice)
+            #scores.append(response_split[1].strip()[:999])  # advice
 
         # set the ratings in previous metadata
         previous_metadata["ratings"] = scores
@@ -254,6 +265,7 @@ Improved prompt: """
             logger.info("Response:", response.json())
         else:
             logger.error("Failed to get response. Status code:", response.status_code)
+            logger.error(f"response: {str(response)}")
             logger.error("Response:", response.text)
 
         # Return the new name and id and the scores
@@ -300,7 +312,7 @@ Improved prompt: """
         improve_prompt = self.__compile_prompt(
             self.improve_template, prompt=prompt, scores=scores)   # el[2+ i*3] is the advice for the score
         
-        response = self.call_LLM(prompt=improve_prompt, max_tokens=4000)
+        response = self.call_LLM(prompt=improve_prompt)
         
         # Return LLM response
         return response

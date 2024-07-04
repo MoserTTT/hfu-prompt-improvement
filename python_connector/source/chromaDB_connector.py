@@ -198,8 +198,8 @@ class chromaDB_connector:
                 if len(value) < min_length or len(value) > max_length:
                     raise ValueError(
                         f"The {key} has to be of length between {min_length} and {max_length}")
-                if not value.isprintable():
-                    raise ValueError(f"The {key} is not printable")
+                if not key is "ratings" and not value.isprintable():    # ratings get checked when created in LLM_connector
+                    raise ValueError(f"The {key} is not printable (value: {value})")
                 if has_to_pass_regex and not re.match(r'^[a-zA-Z0-9\-\'\s]+$', value):
                     raise ValueError(
                         f"The {key} can only contain letters, numbers, - ,' and whitespaces.")
@@ -229,7 +229,7 @@ class chromaDB_connector:
         validate_list("tags", metadata.get("tags"))
         validate_list("languages", metadata.get("languages"))
         validate_list("ratings", metadata.get("ratings"),
-                      min_length=1, max_length=500)
+                      min_length=1, max_length=1000) # TODO not super clean, max length applies to ratings too
         validate_list("comments", metadata.get("comments"),
                       max_length=500)
         if "version" in metadata:
