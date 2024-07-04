@@ -8,7 +8,7 @@ const styles = {
         left: '50%',
         transform: 'translate(-50%, -50%)',
         textAlign: 'center',
-        overflowY: 'hidden',
+        overflowY: 'auto',
 
         width: '70%',
         height: '70%',
@@ -17,7 +17,34 @@ const styles = {
         backgroundColor: 'rgb(12, 0, 28)',
         border: '2px solid #000',
         borderRadius: '20px',
-        boxShadow: 24
+        boxShadow: 24,
+
+        '::-webkit-scrollbar': {
+            width: '12px',
+        },
+
+        '::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent', // Transparent background
+        },
+
+        '::-webkit-scrollbar-thumb': {
+            backgroundColor: COLORS.darkGray, // Thumb color
+            borderRadius: '6px',
+        },
+
+        '::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: COLORS.gray, // Thumb hover color
+        },
+
+        '::-webkit-scrollbar-track-piece:end': {
+            background: 'transparent',
+            marginBottom: '10px'
+        },
+        
+        '::-webkit-scrollbar-track-piece:start': {
+            background: 'transparent',
+            marginTop: '10px'
+        },
     },
 
     heading: {
@@ -53,8 +80,6 @@ const styles = {
         padding: '16px',
         display: 'flex',
         flexDirection: 'column',
-        overflowY: 'auto',
-        height: '90%'
     },
 
     innerResponseDiv: {
@@ -69,14 +94,15 @@ const styles = {
         height: '40px',
         borderRadius: '50%',
         marginRight: '8px',
+        marginTop: '17px'
     },
 
     responseText: {
         ...FONTS.bodyLarge,
         color: COLORS.white,
-        padding: '10px',
         borderRadius: '10px',
         marginTop: '-2px',
+        marginLeft: '10px',
         maxWidth: '80%',
         textAlign: 'left',
         wordWrap: 'break-word'

@@ -190,7 +190,8 @@ const styles = {
 
     aiImprovedPromptText: {
         ...FONTS.bodyMedium,
-        color: COLORS.white
+        color: COLORS.white,
+        marginTop: '-10px'
     }
 };
 

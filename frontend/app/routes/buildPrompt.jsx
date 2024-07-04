@@ -24,7 +24,7 @@ export default function buildPrompt() {
         const { over, active } = event;
         if (over && over.id === 'droppable') {
           // Append the dropped content to the markdown content
-          setMarkdownContent(markdownContent + "\n\n" + '\n<Prompt title="' + active.id + '" content="' + active.data.current.content + '" />', true);
+          setMarkdownContent(markdownContent + "\n\n\n# " + active.id + "\n" + active.data.current.content, true);
           // Set DragAndDrop state to true
           setDnD(true);
         }

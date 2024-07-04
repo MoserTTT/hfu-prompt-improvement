@@ -8,6 +8,7 @@ import prompt_eval from "./utils/restFunctions/prompt_eval";
 import searchPrompt_name_and_id from "./utils/restFunctions/searchPrompt_name_and_id";
 import call_improve_prompt from "./utils/restFunctions/call_improve_prompt";
 import LoadingSkeletonEval from "./utils/loadingSkeletonEval/LoadingSkeletonEval";
+import Markdown from 'react-markdown'
 
 const AnalysisPage = () => {
   const [promptName, setPromptName] = useState("");
@@ -146,9 +147,11 @@ const AnalysisPage = () => {
               />
                {
                 !isLoading ? (
-                  <p style={styles.aiText}>
-                    {renderTextWithLineBreaks(animatedResponse2)}
-                  </p>
+                  <div style={ styles.aiText } >
+                    <Markdown>
+                      { animatedResponse2 }
+                    </Markdown>
+                  </div>
                 ) : (
                   <LoadingSkeletonEval/>
                 )
@@ -174,7 +177,11 @@ const AnalysisPage = () => {
                   </Tooltip>
                 </div>
                 <div style={styles.aiImprovedPromptTextDiv}>
-                  <p style={styles.aiImprovedPromptText}>{improvedPrompt}</p>
+                  <div style={styles.aiImprovedPromptText}>
+                    <Markdown>
+                      {improvedPrompt}
+                    </Markdown>
+                  </div>
                 </div>
               </div>
             )}
