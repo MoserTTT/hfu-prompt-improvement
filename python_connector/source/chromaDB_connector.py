@@ -37,7 +37,7 @@ class chromaDB_connector:
         self.allowed_metadata_keys = [
             "name", "description", "author", "models", "tags", "languages", "ratings", "comments", "version"]
 
-        self.__cooldown = 200
+        self.__cooldown = 40
         
         # getting the client
         try:
@@ -79,7 +79,7 @@ class chromaDB_connector:
                 self.__get_client()
             else:
                 raise ConnectionError(
-                    "Did not attempt to connect to client: remaining Cooldown  "+ repr(expired_cooldown))
+                    "Did not attempt to connect to client: expired Cooldown  "+ repr(expired_cooldown))
 
     def create_prompt(self, prompt: str, metadata: dict):
         """
