@@ -35,13 +35,14 @@ const styles = {
 
     list: {
         display: 'flex',
-        flexDirection: 'column',
+        justifyContent: 'space-evenly',
+        flexDirection: 'column'
     },
 
     listItemButton: {
         paddingLeft: 30,
         paddingRight: 30,
-        marginTop: 20
+        marginTop: '80px'
     },
 
     listItemText: {

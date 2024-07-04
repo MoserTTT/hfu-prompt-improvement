@@ -14,12 +14,12 @@ import { useEffect, useState } from "react";
 
 export function Layout({ children }) {
 
-  const [sidebarWidth, setSidebarWidth] = useState('260px');
+  const [sidebarWidth, setSidebarWidth] = useState('125px');
 
   const [isClient, setIsClient] = useState(false);
 
   const toggleSidebar = (isCollapsed) => {
-    setSidebarWidth(isCollapsed? '260px' : '110px');
+    setSidebarWidth(isCollapsed? '265px' : '125px');
   }
 
   useEffect(() => {
@@ -40,10 +40,10 @@ export function Layout({ children }) {
           { // render only if client
             isClient && (
               <div style={{ width: '100%', display: 'flex' }}>
-                <div style={{...styles.sidebar, width: sidebarWidth }}>
+                <div style={{ width: sidebarWidth }}>
                   <MenuSidebar onToggle={toggleSidebar}/>
                 </div>
-                  <div style={ styles.page }>
+                <div style={ styles.page }>
                   { children }
                 </div>
               </div>
