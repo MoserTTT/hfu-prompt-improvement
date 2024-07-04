@@ -5,7 +5,7 @@ const styles = {
         backgroundColor: '#fff',
         overflowX: 'hidden',
         overflowY: 'auto',
-        width: '35vw',
+        width: '33vw',
         padding: '20px',
     },
     header: {

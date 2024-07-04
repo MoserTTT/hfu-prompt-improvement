@@ -131,7 +131,7 @@ const NameTagInput = () => {
     function isAlphaNumeric(str) {
       for (let i = 0; i < str.length; i++) {
         const char = str[i];
-        if (!(/[a-zA-Z0-9]/).test(char)) {
+        if (!(/[a-zA-Z0-9-'\s_]/).test(char)) {
           return false; // Wenn ein nicht-alphanumerisches Zeichen gefunden wird
         }
       }

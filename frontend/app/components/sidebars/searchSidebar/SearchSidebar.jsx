@@ -79,7 +79,7 @@ const SearchSidebar = ({ style, searchOpen, setSearchOpen }) => {
                 return {
                     name: metadata.name,
                     dateCreated: metadata.date_of_creation,
-                    status: metadata.status,
+                    status: 'Active',
                     tags: metadata.tags,
                     author: metadata.author,
                     content: doc

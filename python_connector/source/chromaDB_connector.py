@@ -200,7 +200,7 @@ class chromaDB_connector:
                         f"The {key} has to be of length between {min_length} and {max_length}")
                 if not key is "ratings" and not value.isprintable():    # ratings get checked when created in LLM_connector
                     raise ValueError(f"The {key} is not printable (value: {value})")
-                if has_to_pass_regex and not re.match(r'^[a-zA-Z0-9\-\'\s]+$', value):
+                if has_to_pass_regex and not re.match(r'^[a-zA-Z0-9\-\'\s_]+$', value):
                     raise ValueError(
                         f"The {key} can only contain letters, numbers, - ,' and whitespaces.")
 
