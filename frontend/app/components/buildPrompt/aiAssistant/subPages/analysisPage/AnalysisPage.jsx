@@ -27,14 +27,18 @@ const AnalysisPage = () => {
   const setMarkdownContent = useStore((state) => state.setMarkdownContent);
   const setDiffMarkdownContent = useStore((state) => state.setDiffMarkdownContent);
 
+  var prompt_name_and_id = "";
+
   const handleKeyDown = async (e) => {
     if (e.keyCode === 13 && promptName.trim() !== "") {
-      const prompt_name_and_id = await searchPrompt_name_and_id(promptName);
-      setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
-      setIsLoading(true);
-      setResponse2(await prompt_eval(prompt_name_and_id));
-      setIsLoading(false);
-      setImprovedPrompt(await call_improve_prompt(prompt_name_and_id));
+      prompt_name_and_id = await searchPrompt_name_and_id(promptName);
+      if(prompt_name_and_id != ""){
+        setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
+        setIsLoading(true);
+        setResponse2(await prompt_eval(prompt_name_and_id));
+        setIsLoading(false);
+        setImprovedPrompt(await call_improve_prompt(prompt_name_and_id));
+      }
     }
   };
 

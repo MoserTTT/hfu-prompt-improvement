@@ -1,5 +1,6 @@
 const call_improve_prompt = async (prompt_name_and_id) => {
-  console.log("call_improve_prompt...");
+  console.log("call_improve_prompt");
+  
   const data = { prompt_name_and_id: prompt_name_and_id }; // Create a data object with the prompt
 
   try {
@@ -12,14 +13,13 @@ const call_improve_prompt = async (prompt_name_and_id) => {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to eval prompt");
+      throw new Error("Failed to improve prompt");
     }
 
     const responseData = await response.json();
-    console.log(responseData);
     return responseData;
   } catch (error) {
-    console.error("Error in prompt eval:", error);
+    console.error("Error in prompt improve:", error);
   }
 };
 

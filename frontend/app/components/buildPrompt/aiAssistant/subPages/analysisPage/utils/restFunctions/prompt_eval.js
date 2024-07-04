@@ -1,4 +1,6 @@
 const prompt_eval = async (prompt_name_and_id) => {
+  console.log("prompt_eval...");
+  
   const data = { prompt_name_and_id: prompt_name_and_id }; // Create a data object with the prompt
 
   try {
@@ -15,15 +17,13 @@ const prompt_eval = async (prompt_name_and_id) => {
     }
 
     const responseData = await response.json();
+    console.log(responseData);
 
     return (
-      "Clarity " +
-      responseData.clarity[0][0] + "\n" +
-      responseData.clarity[0][1] + "\n\n" +
-      "Completeness " +
+      "Completeness Score: " +
       responseData.completeness[0][0] + "\n" +
       responseData.completeness[0][1] + "\n\n" +
-      "Structure " +
+      "Structure Score: " +
       responseData.structure[0][0] + "\n" +
       responseData.structure[0][1]
     );

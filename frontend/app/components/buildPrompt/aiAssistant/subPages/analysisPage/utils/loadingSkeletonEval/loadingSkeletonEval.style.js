@@ -6,7 +6,6 @@ const styles = {
         width: '100%',
         backgroundColor: COLORS.background,
         borderRadius: '20px',
-        boxShadow: '0px 0px 30px 3px rgba(0, 0, 0, 0.5)'
     },
 
     skeletonHeading: {
