@@ -24,11 +24,11 @@ export default function buildPrompt() {
         const { over, active } = event;
         if (over && over.id === 'droppable') {
           // Append the dropped content to the markdown content
-          setMarkdownContent(markdownContent + "\n\n" + '\n<Prompt title="' + active.id + '" content="' + active.data.current.content + '" />', true);
+          setMarkdownContent(markdownContent + "\n\n\n# " + active.id + "\n" + active.data.current.content, true);
           // Set DragAndDrop state to true
           setDnD(true);
         }
-        document.body.style.overflow = 'scroll';
+        document.body.style.overflow = 'auto';
         document.getElementsByClassName("css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop")[0].style.opacity = 1;
         document.getElementsByClassName("css-1160xiw-MuiPaper-root-MuiDrawer-paper")[0].style.opacity = 1;
         movedPixel_cnt = 0;
@@ -41,7 +41,6 @@ export default function buildPrompt() {
 
     const handleDragMove = () => {
       movedPixel_cnt++;
-      console.log(movedPixel_cnt);
       if(movedPixel_cnt > 20){
         document.getElementsByClassName("css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop")[0].style.opacity = 0;
         document.getElementsByClassName("css-1160xiw-MuiPaper-root-MuiDrawer-paper")[0].style.opacity = 0;

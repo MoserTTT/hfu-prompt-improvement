@@ -5,13 +5,17 @@ import COLORS from "../../../../../../styles/theme";
 import { useState, useEffect } from "react";
 import useStore from "../../../utils/markdownContentStore";
 import AssistantCloseIcon from "../../../../../../assets/icons/components/AssistantCloseIcon";
+import prompt_eval from "./utils/restFunctions/prompt_eval";
+import searchPrompt_name_and_id from "./utils/restFunctions/searchPrompt_name_and_id";
+import call_improve_prompt from "./utils/restFunctions/call_improve_prompt";
+import LoadingSkeletonEval from "./utils/loadingSkeletonEval/LoadingSkeletonEval";
+import Markdown from 'react-markdown'
 
 const AnalysisPage = ({onCloseWindow}) => {
-  // State variables to manage the prompt name and various responses
   const [promptName, setPromptName] = useState("");
   const [question1, setQuestion1] = useState("What is the name of the prompt you want to analyze?");
   const [response1, setResponse1] = useState("");
-  const [response2, setResponse2] = useState("This prompt needs improvement.");
+  const [response2, setResponse2] = useState("");
   const [improvedPrompt, setImprovedPrompt] = useState("This is a dummy AI improved prompt.");
   const [changesApplied, setChangesApplied] = useState(false);
   const [showAiAnswer, setShowAiAnswer] = useState(false);
@@ -20,19 +24,27 @@ const AnalysisPage = ({onCloseWindow}) => {
   const [animatedResponse2, setAnimatedResponse2] = useState("");
   const [iconColor, setIconColor] = useState(COLORS.white);
 
-  // Retrieve state management functions from the store
+  const [isLoading, setIsLoading] = useState(false);
+
   const markdownContent = useStore((state) => state.markdownContent);
   const setMarkdownContent = useStore((state) => state.setMarkdownContent);
   const setDiffMarkdownContent = useStore((state) => state.setDiffMarkdownContent);
 
-  // Handle Enter key press to trigger prompt analysis
-  const handleKeyDown = (e) => {
+  var prompt_name_and_id = "";
+
+  const handleKeyDown = async (e) => {
     if (e.keyCode === 13 && promptName.trim() !== "") {
-      setResponse1(`Analyzing prompt: ${promptName}`);
+      prompt_name_and_id = await searchPrompt_name_and_id(promptName);
+      if(prompt_name_and_id != ""){
+        setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
+        setIsLoading(true);
+        setResponse2(await prompt_eval(prompt_name_and_id));
+        setIsLoading(false);
+        setImprovedPrompt(await call_improve_prompt(prompt_name_and_id));
+      }
     }
   };
 
-  // Effect to animate the AI's analysis response character-by-character
   useEffect(() => {
     if (response1) {
       let index = 0;
@@ -40,32 +52,30 @@ const AnalysisPage = ({onCloseWindow}) => {
         setAnimatedResponse1(response1.slice(0, index + 1));
         index++;
         if (index === response1.length) {
+          setShowAiAnswer(true);
           clearInterval(timer);
-          setShowAiAnswer(true); // Show the AI's next response after animation
         }
       }, 50);
       return () => clearInterval(timer);
     }
   }, [response1]);
 
-  // Effect to animate the AI's suggestion for improved prompt character-by-character
   useEffect(() => {
     if (showAiAnswer) {
       let index = 0;
-      const timer = setInterval(() => {
+      const timer = setInterval(async () => {
         setAnimatedResponse2(response2.slice(0, index + 1));
         index++;
         if (index === response2.length) {
           clearInterval(timer);
-          setTimeout(() => setShowImprovedPrompt(true), 200); // Delay before showing improved prompt
+          setTimeout(() => setShowImprovedPrompt(true), 200);
         }
-      }, 50);
+      }, 10);
       return () => clearInterval(timer);
     }
-  }, [showAiAnswer]);
+  }, [response2, showAiAnswer]);
 
-  // Handle apply changes button click
-  const handleApplyChangesClick = () => {
+  const handleApplyChangesClick = async () => {
     if (!changesApplied) {
       setChangesApplied(true);
       setDiffMarkdownContent(markdownContent);
@@ -73,12 +83,20 @@ const AnalysisPage = ({onCloseWindow}) => {
     }
   };
 
-  // Handle prompt name input change
   const handlePromptNameChange = (e) => {
     setPromptName(e.target.value);
   };
 
  
+  const renderTextWithLineBreaks = (text) => {
+    return text.split("\n").map((line, index) => (
+      <span key={index}>
+        {line}
+        <br />
+      </span>
+    ));
+  };
+
   return (
     <Box sx={styles.modalBox}>
       <p style={styles.heading}>Analyze Prompt</p>
@@ -94,9 +112,6 @@ const AnalysisPage = ({onCloseWindow}) => {
             </button>
 
       <div style={styles.dialogDiv}>
-        {
-          // Step 1: Initial Question
-        }
         <div style={styles.aiQuestion}>
           <div style={styles.innerAiQuestion}>
             <img
@@ -104,7 +119,7 @@ const AnalysisPage = ({onCloseWindow}) => {
               src="../../../../assets/icons/organicAI_Icon.gif"
               alt="AI Icon"
             />
-            <p style={styles.aiQuestionText}>{question1}</p>
+            <p style={styles.aiText}>{question1}</p>
           </div>
           <div style={styles.responseOnFirstQuestion}>
             <div style={styles.innerResponseOnFirstQuestion}>
@@ -121,69 +136,69 @@ const AnalysisPage = ({onCloseWindow}) => {
           </div>
         </div>
 
-        {
-          // Step 2: AI Analysis Response
-          response1 && (
-            <div style={styles.aiQuestion}>
-              <div style={styles.innerAiQuestion}>
-                <img
-                  style={styles.aiImage}
-                  src="../../../../assets/icons/organicAI_Icon.gif"
-                  alt="AI Icon"
-                />
-                <p style={styles.aiQuestionText}>{animatedResponse1}</p>
-              </div>
+        {response1 && (
+          <div style={styles.aiAnswer}>
+            <div style={styles.innerAiAnswer}>
+              <img
+                style={styles.aiImage}
+                src="../../../../assets/icons/organicAI_Icon.gif"
+                alt="AI Icon"
+              />
+              <p style={styles.aiText}>{animatedResponse1}</p>
             </div>
-          )
-        }
-        
-        {
-          // Step 3: Improved Prompt Suggestion
-          showAiAnswer && (
-            <div style={styles.aiQuestion}>
-              <div style={styles.innerAiQuestion}>
-                <img
-                  style={styles.aiImage}
-                  src="../../../../assets/icons/organicAI_Icon.gif"
-                  alt="AI Icon"
-                />
-                <p style={styles.aiQuestionText}>{animatedResponse2}</p>
-              </div>
-              {showImprovedPrompt && (
-                <div style={styles.aiImprovedPromptDiv}>
-                  <div style={styles.aiImprovedPromptHeader}>
-                    <Tooltip title="Apply Changes">
-                      <button
-                        onClick={handleApplyChangesClick}
-                        style={styles.aiImprovedPromptButton}
-                      >
-                        {changesApplied ? (
-                          <CheckIcon
-                            color={COLORS.gray}
-                            width={18}
-                            height={18}
-                          />
-                        ) : (
-                          <CopyIcon
-                            color={COLORS.gray}
-                            width={23}
-                            height={23}
-                          />
-                        )}
-                        <p style={styles.aiImprovedPromptButtonText}>
-                          {changesApplied ? "Applied!" : "Apply Changes"}
-                        </p>
-                      </button>
-                    </Tooltip>
+          </div>
+        )}
+
+        {showAiAnswer && (
+          <div style={styles.aiAnswer}>
+            <div style={styles.innerAiAnswer}>
+              <img
+                style={styles.aiImage}
+                src="../../../../assets/icons/organicAI_Icon.gif"
+                alt="AI Icon"
+              />
+               {
+                !isLoading ? (
+                  <div style={ styles.aiText } >
+                    <Markdown>
+                      { animatedResponse2 }
+                    </Markdown>
                   </div>
-                  <div style={styles.aiImprovedPromptTextDiv}>
-                    <p style={styles.aiImprovedPromptText}>{improvedPrompt}</p>
+                ) : (
+                  <LoadingSkeletonEval/>
+                )
+              }
+            </div>
+            {showImprovedPrompt && (
+              <div style={styles.aiImprovedPromptDiv}>
+                <div style={styles.aiImprovedPromptHeader}>
+                  <Tooltip title="Apply Changes">
+                    <button
+                      onClick={handleApplyChangesClick}
+                      style={styles.aiImprovedPromptButton}
+                    >
+                      {changesApplied ? (
+                        <CheckIcon color={COLORS.gray} width={18} height={18} />
+                      ) : (
+                        <CopyIcon color={COLORS.gray} width={23} height={23} />
+                      )}
+                      <p style={styles.aiImprovedPromptButtonText}>
+                        {changesApplied ? "Applied!" : "Apply Changes"}
+                      </p>
+                    </button>
+                  </Tooltip>
+                </div>
+                <div style={styles.aiImprovedPromptTextDiv}>
+                  <div style={styles.aiImprovedPromptText}>
+                    <Markdown>
+                      {improvedPrompt}
+                    </Markdown>
                   </div>
                 </div>
-              )}
-            </div>
-          )
-        }
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </Box>
   );

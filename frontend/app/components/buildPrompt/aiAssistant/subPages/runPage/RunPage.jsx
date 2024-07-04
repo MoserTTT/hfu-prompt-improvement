@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react";
 import useStore from "../../../utils/markdownContentStore";
 import AssistantCloseIcon from "../../../../../../assets/icons/components/AssistantCloseIcon";
 import COLORS from "../../../../../../styles/theme";
+import Markdown from 'react-markdown'
+import LoadingSkeletonRun from "./utils/loadingSkeletonRun/LoadingSkeletonRun";
 
 const RunPage = ({onCloseWindow}) => {
   const markdownContent = useStore((state) => state.markdownContent);
@@ -13,12 +15,13 @@ const RunPage = ({onCloseWindow}) => {
   const [responseText, setResponseText] = useState("");
   const [animatedText, setAnimatedText] = useState("");
   const [iconColor, setIconColor] = useState(COLORS.white);
+  const [isLoading, setIsLoading] = useState(false);
 
   const callLLM = async () => {
     if (calledLLM.current) return; // Prevent multiple calls
     calledLLM.current = true;
+    setIsLoading(true);
 
-    console.log("call llm...");
     const prompt = encodeURIComponent(
       transformMarkdownContent(markdownContent)
     );
@@ -43,6 +46,7 @@ const RunPage = ({onCloseWindow}) => {
     } catch (error) {
       console.error("Error searching by metadata:", error);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -89,7 +93,17 @@ const RunPage = ({onCloseWindow}) => {
             style={ styles.aiImage }
             src="../../../../assets/icons/organicAI_Icon.gif"
           />
-          <p style={ styles.responseText }>{ animatedText }</p>
+          {
+            isLoading ? (
+              <LoadingSkeletonRun/>
+            ) : (
+              <div style={ styles.responseText }>
+                <Markdown>
+                  { animatedText }
+                </Markdown>
+              </div>
+            )
+          }
         </div>
       </div>
     </Box>

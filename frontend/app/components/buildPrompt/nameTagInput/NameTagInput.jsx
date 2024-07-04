@@ -208,7 +208,6 @@ const NameTagInput = () => {
             label={tag}
             variant="outlined"
             onDelete={() => handleDeleteTag(tag)}
-            deleteIcon={<button aria-label="delete" />}
           />
         ))}
       </Stack>
