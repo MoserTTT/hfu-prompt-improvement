@@ -82,13 +82,20 @@ const styles = {
     },
 
     aiText: {
-        ...FONTS.bodyLarge,
+        display: 'block',
+        fontFamily: 'Roboto',
+        //letterSpacing: 0.5,
         color: COLORS.white,
         borderRadius: '10px',
         maxWidth: '89%',
-        textAlign: 'left',
         padding: 0,
+        textAlign: 'left',
         marginTop: '10px'
+    },
+
+    response2: {
+        marginTop: '-10px',
+        marginLeft: '5px'
     },
 
     responseOnFirstQuestion: {
@@ -110,7 +117,7 @@ const styles = {
         color: COLORS.white,
         marginRight: '20px',
         paddingLeft: '10px',
-        paddingRight: '10px',
+        paddingRight: '10px'
     },
     
     applyChangesDiv: {
@@ -149,8 +156,8 @@ const styles = {
     },
 
     aiImprovedPromptDiv: {
-        marginLeft: '55px',
-        marginRight: '60px'
+        marginLeft: '50px',
+        marginRight: '35px'
     },
 
     aiImprovedPromptHeader: {

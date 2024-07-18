@@ -16,7 +16,6 @@ const styles = {
     },
 
     skeletonText: {
-        width: '100%',
         height: '20px',
         marginBottom: '10px',
         backgroundColor: COLORS.darkGray

@@ -10,6 +10,7 @@ import searchPrompt_name_and_id from "./utils/restFunctions/searchPrompt_name_an
 import call_improve_prompt from "./utils/restFunctions/call_improve_prompt";
 import LoadingSkeletonEval from "./utils/loadingSkeletonEval/LoadingSkeletonEval";
 import Markdown from 'react-markdown'
+import LoadingSkeletonImprove from "./utils/loadingSkeletonImprove/LoadingSkeletonImprove";
 
 const AnalysisPage = ({onCloseWindow}) => {
   const [promptName, setPromptName] = useState("");
@@ -24,7 +25,8 @@ const AnalysisPage = ({onCloseWindow}) => {
   const [animatedResponse2, setAnimatedResponse2] = useState("");
   const [iconColor, setIconColor] = useState(COLORS.white);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingResponse2, setIsLoadingResponse2] = useState(false);
+  const [isLoadingImprovedPrompt, setIsLoadingImprovedPrompt] = useState(false);
 
   const markdownContent = useStore((state) => state.markdownContent);
   const setMarkdownContent = useStore((state) => state.setMarkdownContent);
@@ -37,9 +39,12 @@ const AnalysisPage = ({onCloseWindow}) => {
       prompt_name_and_id = await searchPrompt_name_and_id(promptName);
       if(prompt_name_and_id != ""){
         setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
-        setIsLoading(true);
+
+        setIsLoadingResponse2(true);
+        setIsLoadingImprovedPrompt(true);
         setResponse2(await prompt_eval(prompt_name_and_id));
-        setIsLoading(false);
+        setIsLoadingResponse2(false);
+
         setImprovedPrompt(await call_improve_prompt(prompt_name_and_id));
       }
     }
@@ -68,6 +73,7 @@ const AnalysisPage = ({onCloseWindow}) => {
         index++;
         if (index === response2.length) {
           clearInterval(timer);
+          setIsLoadingImprovedPrompt(false);
           setTimeout(() => setShowImprovedPrompt(true), 200);
         }
       }, 10);
@@ -85,16 +91,6 @@ const AnalysisPage = ({onCloseWindow}) => {
 
   const handlePromptNameChange = (e) => {
     setPromptName(e.target.value);
-  };
-
- 
-  const renderTextWithLineBreaks = (text) => {
-    return text.split("\n").map((line, index) => (
-      <span key={index}>
-        {line}
-        <br />
-      </span>
-    ));
   };
 
   return (
@@ -158,10 +154,10 @@ const AnalysisPage = ({onCloseWindow}) => {
                 alt="AI Icon"
               />
                {
-                !isLoading ? (
-                  <div style={ styles.aiText } >
+                !isLoadingResponse2 ? (
+                  <div style={{ ...styles.aiText, ...styles.response2 }} >
                     <Markdown>
-                      { animatedResponse2 }
+                      {animatedResponse2}
                     </Markdown>
                   </div>
                 ) : (
@@ -169,34 +165,44 @@ const AnalysisPage = ({onCloseWindow}) => {
                 )
               }
             </div>
-            {showImprovedPrompt && (
+            {
               <div style={styles.aiImprovedPromptDiv}>
-                <div style={styles.aiImprovedPromptHeader}>
-                  <Tooltip title="Apply Changes">
-                    <button
-                      onClick={handleApplyChangesClick}
-                      style={styles.aiImprovedPromptButton}
-                    >
-                      {changesApplied ? (
-                        <CheckIcon color={COLORS.gray} width={18} height={18} />
-                      ) : (
-                        <CopyIcon color={COLORS.gray} width={23} height={23} />
-                      )}
-                      <p style={styles.aiImprovedPromptButtonText}>
-                        {changesApplied ? "Applied!" : "Apply Changes"}
-                      </p>
-                    </button>
-                  </Tooltip>
-                </div>
-                <div style={styles.aiImprovedPromptTextDiv}>
-                  <div style={styles.aiImprovedPromptText}>
-                    <Markdown>
-                      {improvedPrompt}
-                    </Markdown>
-                  </div>
-                </div>
+                {
+                  isLoadingImprovedPrompt ? (
+                    <LoadingSkeletonImprove/>
+                  ) : (
+                    showImprovedPrompt && (
+                      <>
+                        <div style={styles.aiImprovedPromptHeader}>
+                          <Tooltip title="Apply Changes">
+                            <button
+                              onClick={handleApplyChangesClick}
+                              style={styles.aiImprovedPromptButton}
+                            >
+                              {changesApplied ? (
+                                <CheckIcon color={COLORS.gray} width={18} height={18} />
+                              ) : (
+                                <CopyIcon color={COLORS.gray} width={23} height={23} />
+                              )}
+                              <p style={styles.aiImprovedPromptButtonText}>
+                                {changesApplied ? "Applied!" : "Apply Changes"}
+                              </p>
+                            </button>
+                          </Tooltip>
+                        </div>
+                        <div style={styles.aiImprovedPromptTextDiv}>
+                          <div style={styles.aiImprovedPromptText}>
+                            <Markdown>
+                              {improvedPrompt}
+                            </Markdown>
+                          </div>
+                        </div>
+                      </>
+                    )
+                  )
+                }
               </div>
-            )}
+            }
           </div>
         )}
       </div>
