@@ -8,6 +8,12 @@ const LoadingSkeletonEval = () => {
       <Skeleton variant="text" sx={ styles.skeletonHeading } />
       <Skeleton variant="text" sx={ styles.skeletonText } width="92%"/>
       <Skeleton variant="text" sx={ styles.skeletonText } width="93%"/>
+      <Skeleton variant="text" sx={ styles.skeletonHeading } />
+      <Skeleton variant="text" sx={ styles.skeletonText } width="92%"/>
+      <Skeleton variant="text" sx={ styles.skeletonText } width="93%"/>
+      <Skeleton variant="text" sx={ styles.skeletonHeading } />
+      <Skeleton variant="text" sx={ styles.skeletonText } width="92%"/>
+      <Skeleton variant="text" sx={ styles.skeletonText } width="93%"/>
     </Box>
   );
 };

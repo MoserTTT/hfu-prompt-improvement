@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./readMore.style";
+import Markdown from "react-markdown";
 
 const ReadMore = ({ content, increment = 100 }) => {
     const [visibleLength, setVisibleLength] = useState(increment);
@@ -13,16 +14,16 @@ const ReadMore = ({ content, increment = 100 }) => {
 
     return (
         <div style={styles.container}>
-        <p style={styles.text}>
-            {displayContent}
-        </p>
-        {visibleLength < content.length && (
-            <button
-            style={styles.button}
-            onMouseDown={handleMouseDown} >
-                ...
-            </button>
-        )}
+            <Markdown>
+                {displayContent}
+            </Markdown>
+            {visibleLength < content.length && (
+                <button
+                style={styles.button}
+                onMouseDown={handleMouseDown} >
+                    ...
+                </button>
+            )}
         </div>
     );
 };

@@ -11,6 +11,7 @@ import call_improve_prompt from "./utils/restFunctions/call_improve_prompt";
 import LoadingSkeletonEval from "./utils/loadingSkeletonEval/LoadingSkeletonEval";
 import Markdown from 'react-markdown'
 import LoadingSkeletonImprove from "./utils/loadingSkeletonImprove/LoadingSkeletonImprove";
+import toast from "react-hot-toast";
 
 const AnalysisPage = ({onCloseWindow}) => {
   const [promptName, setPromptName] = useState("");
@@ -37,15 +38,20 @@ const AnalysisPage = ({onCloseWindow}) => {
   const handleKeyDown = async (e) => {
     if (e.keyCode === 13 && promptName.trim() !== "") {
       prompt_name_and_id = await searchPrompt_name_and_id(promptName);
+      console.log(prompt_name_and_id);
       if(prompt_name_and_id != ""){
-        setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
-
-        setIsLoadingResponse2(true);
-        setIsLoadingImprovedPrompt(true);
-        setResponse2(await prompt_eval(prompt_name_and_id));
-        setIsLoadingResponse2(false);
-
-        setImprovedPrompt(await call_improve_prompt(prompt_name_and_id));
+        if(prompt_name_and_id == undefined){
+          toast.error('Enter a existing name!');
+        } else {
+          setResponse1(`Analyzing prompt: ${prompt_name_and_id}`);
+  
+          setIsLoadingResponse2(true);
+          setIsLoadingImprovedPrompt(true);
+          setResponse2(await prompt_eval(prompt_name_and_id));
+          setIsLoadingResponse2(false);
+  
+          setImprovedPrompt(await call_improve_prompt(prompt_name_and_id));
+        }
       }
     }
   };

@@ -107,6 +107,7 @@ const TextPromptArea = () => {
           MDX.listsPlugin(),
           MDX.linkPlugin(),
           MDX.quotePlugin(),
+          MDX.tablePlugin(),
           MDX.thematicBreakPlugin(),
           MDX.markdownShortcutPlugin(),
         ]}

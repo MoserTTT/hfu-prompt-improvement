@@ -4,13 +4,10 @@ import COLORS from "../../../../../styles/theme";
 const styles = {
 
     container: {
-        display: 'inline'
-    },
-
-    text: {
-        ...FONTS.labelMedium,
-        lineHeight: 0,
         display: 'inline',
+        fontFamily: 'Roboto',
+        fontStyle: 'normal',
+        maxWidth: '100%',
     },
 
     button: {
