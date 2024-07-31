@@ -1,0 +1,4 @@
+chromadb_persistance
+python_connector/source/__pycache__
+.vscode
+chroma-index

@@ -1,0 +1,37 @@
+services:
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    volumes:
+      - ./chroma-index:/chroma/chroma
+    ports:
+      - 5555:8000
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://chroma:8000/docs || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  python-connector:
+    build:
+        context: ./python_connector
+        dockerfile: Dockerfile
+        args:
+          EF_API_KEY: ${EF_API_KEY}
+    image: prompt_management_back_end
+    ports:
+      - 5000:5000
+    depends_on:
+      chroma:
+        condition: service_healthy
+
+
+  react-frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      image: react_frontend
+      ports:
+        - 5173:5173
+      depends_on:
+        python-connector:
+          condition: service_started
